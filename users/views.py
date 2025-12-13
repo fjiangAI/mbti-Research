@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password
 
 from .forms import RegisterForm, LoginForm
 
@@ -12,12 +11,12 @@ def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = User(
+            # 使用create_user自动处理密码哈希
+            user = User.objects.create_user(
                 username=form.cleaned_data['username'],
                 email=form.cleaned_data['email'],
-                password=make_password(form.cleaned_data['password']),
+                password=form.cleaned_data['password'],
             )
-            user.save()
             messages.success(request, '注册成功，请登录')
             return redirect('users:login')
     else:
@@ -55,14 +54,21 @@ def logout_view(request):
 
 @login_required
 def password_change_view(request):
+    """修改密码视图"""
     if request.method == 'POST':
-        pwd1 = request.POST.get('password')
-        pwd2 = request.POST.get('confirm_password')
-        if not pwd1 or pwd1 != pwd2:
+        pwd1 = request.POST.get('password', '').strip()
+        pwd2 = request.POST.get('confirm_password', '').strip()
+        
+        if not pwd1:
+            messages.error(request, '密码不能为空')
+        elif len(pwd1) < 8:
+            messages.error(request, '密码长度至少8位')
+        elif pwd1 != pwd2:
             messages.error(request, '两次输入的密码不一致')
         else:
             request.user.set_password(pwd1)
             request.user.save()
             messages.success(request, '密码修改成功，请重新登录')
             return redirect('users:login')
+    
     return render(request, 'users/password_change.html')

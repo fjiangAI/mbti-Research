@@ -10,7 +10,7 @@
 - 结果计算与类型码生成（如 INTJ），维度置信度与详情展示
 - 导出测试结果为 PDF 报告（ReportLab，可选安装）
 - 密码输入眼睛图标显示/隐藏，与输入框右侧对齐
-- 开发环境下 `@vite/client` 路由占位，避免控制台 404 噪音
+
 
 ## 🛠️ 技术栈
 - 后端：Django 5.2.6
@@ -26,7 +26,7 @@
 ## 🔧 安装与配置
 ### 1. 进入项目目录并创建虚拟环境
 ```bash
-cd mbti-system
+cd mbti-test
 python -m venv venv
 venv\Scripts\activate  # Windows
 # 或
@@ -39,16 +39,90 @@ pip install -r requirements.txt
 ```
 > 说明：`reportlab` 为 PDF 导出所需的可选依赖，若不需要 PDF 功能可不安装。
 
-### 3. 初始化数据库
+### 3. 数据库迁移
+数据库迁移是 Django 管理数据库结构变更的方式，需要按顺序执行：
+
 ```bash
+# 生成迁移文件（检测模型变化）
 python manage.py makemigrations
+
+# 执行迁移（将迁移应用到数据库）
 python manage.py migrate
 ```
 
-### 4. 创建超级用户（可选）
+**迁移说明**：
+- `makemigrations`：扫描模型定义的变化，生成迁移文件（保存在 `mbti/migrations/` 目录）
+- `migrate`：执行所有未应用的迁移，更新数据库结构
+- 首次运行会创建所有必要的表结构
+- 后续模型变更时，需要先运行 `makemigrations` 再运行 `migrate`
+
+### 4. 数据库初始化与数据导入
+
+项目提供了完整的数据库管理脚本来初始化数据和导入题库：
+
+#### 4.1 完整初始化流程（推荐）
+
 ```bash
-python manage.py createsuperuser
+# 1. 确保已激活虚拟环境
+# source venv/bin/activate  # macOS/Linux
+# venv\Scripts\activate     # Windows
+
+# 2. 清空数据库（可选，如果需要完全重置）
+python database_management/clear_database.py
+
+# 3. 初始化数据库（导入标准MBTI 93题题库 + 创建管理员账号）
+python database_management/init_database.py
+
+# 4. 导入16种人格类型详细数据（可选，推荐）
+python database_management/populate_personality_data.py
 ```
+
+#### 4.2 数据库管理脚本说明
+
+**`clear_database.py`** - 清空数据库
+- 清空所有测试相关数据（题目、回答、结果、用户等）
+- 保留超级用户账号
+```bash
+python database_management/clear_database.py
+```
+
+**`init_database.py`** - 初始化数据库
+- 导入标准MBTI 93题题库（从JSON文件）
+- 创建Django后台管理员账号（用户名：`admin`，密码：`admin@123..`）
+```bash
+python database_management/init_database.py
+```
+
+**`add_questions_from_json.py`** - 仅导入题库
+- 从JSON格式文件导入标准MBTI 93题题库
+- 不创建管理员账号（推荐使用此脚本单独导入题库）
+```bash
+python database_management/add_questions_from_json.py
+```
+> **注意**：这是推荐的题库导入方式，使用JSON格式更清晰易维护。
+
+**`populate_personality_data.py`** - 导入人格类型数据
+- 导入16种MBTI人格类型的详细描述数据
+- 包含丰富的描述信息（性格特点、工作风格、人际关系、职业建议等）
+- 使用 `get_or_create`，可安全重复执行
+```bash
+python database_management/populate_personality_data.py
+```
+
+**`validate_scoring_rules.py`** - 验证计分规则
+- 验证标准MBTI 93题的计分规则是否正确
+```bash
+python database_management/validate_scoring_rules.py
+```
+
+#### 4.3 管理员账号
+
+初始化数据库后会自动创建管理员账号：
+- **用户名**：`admin`
+- **密码**：`admin@123..`
+- **访问地址**：`http://127.0.0.1:8000/admin/`
+
+> **注意**：官方 MBTI 题库与评估工具受版权与商标保护，禁止在未经授权的情况下复刻。当前题库为开放版、结构兼容的替代方案，使用标准MBTI 93题计分规则，评分逻辑位于 `mbti/services_standard.py`。
 
 ### 5. 启动开发服务器
 ```bash
@@ -56,57 +130,55 @@ python manage.py runserver 127.0.0.1:8000
 ```
 访问 `http://127.0.0.1:8000`。
 
-## 🧪 初始化题库与类型资料
-本项目提供了脚本与数据文件来导入题库与 16 种人格类型说明。
-
-### 导入题库（开放版）
-- 题库文件位置：`data/questions_open_mbti_cn.csv`
-- 在项目根目录执行：
-```bash
-# Windows PowerShell（确保已安装依赖并完成数据库迁移）
-python add_questions.py
+## 📁 项目结构
 ```
-- 脚本行为：
-  - 读取 `data/questions_open_mbti_cn.csv`，将题目写入数据库（存在则更新）
-  - 自动创建/更新问卷并激活（优先激活包含题目最多的问卷，如 `mbti_open_v1`）
-  - 若 CSV 缺失，脚本会回退到内置的题库列表
-
-### 导入性格类型资料
-- 脚本路径：`populate_personality_data.py`
-- 在项目根目录执行：
-```bash
-python populate_personality_data.py
-```
-- 脚本行为：
-  - 将 16 种类型（如 `INTJ`、`ENFP` 等）的名称、描述、优势、成长建议、人格特质、工作风格、沟通风格等写入 `TypeProfile` 表中
-  - 使用 `get_or_create` 创建记录；若已存在则更新字段，可安全重复执行
-
-> 注意：官方 MBTI 题库与评估工具受版权与商标保护，禁止在未经授权的情况下复刻。当前题库为开放版、结构兼容的替代方案，评分逻辑位于 `mbti/views.py`，使用 5 点量表标准化到 [-2..+2] 并按 `keyed_pole` 累加到四个维度（IE、SN、TF、JP）。
-
-## 📁 主要结构
-```
-mbti-system/
-├── manage.py
-├── mbti_site/             # 项目配置
-│   ├── settings.py        # Django 设置
-│   └── urls.py            # 主路由（含 @vite/client 占位）
-├── mbti/                  # MBTI 应用
-│   ├── models.py          # 问题/回答/结果/类型档案
-│   ├── urls.py            # MBTI 路由
-│   └── views.py           # 测试/保存/提交/结果/PDF 导出
-├── users/                 # 用户应用
-│   ├── forms.py           # 登录/注册/修改密码表单
-│   └── views.py           # 登录/注册/登出，消息提示
-├── templates/
-│   ├── base.html          # 全局模板，消息渲染与样式
-│   ├── users/             # 登录/注册/修改密码
-│   └── mbti/              # 测试/结果
-└── static/
-    └── css/style.css      # 样式（含密码眼睛图标定位）
+mbti-test/
+├── manage.py                    # Django 管理脚本
+├── requirements.txt             # Python 依赖包
+├── db.sqlite3                   # SQLite 数据库（开发环境）
+├── mbti_site/                   # 项目配置目录
+│   ├── settings.py              # Django 设置
+│   ├── urls.py                  # 主路由配置
+│   ├── middleware.py            # 自定义中间件（session隔离）
+│   └── wsgi.py                  # WSGI 配置
+├── mbti/                        # MBTI 应用
+│   ├── models.py                # 数据模型（Question, Response, Result, TypeProfile等）
+│   ├── views.py                 # 视图函数（测试、保存、提交、结果、PDF导出）
+│   ├── urls.py                  # MBTI 路由配置
+│   ├── services_standard.py     # 标准MBTI计分服务
+│   ├── admin.py                 # Django后台管理配置
+│   └── migrations/              # 数据库迁移文件
+├── users/                       # 用户应用
+│   ├── models.py                # 用户模型（使用Django默认User）
+│   ├── views.py                 # 视图函数（登录、注册、登出、修改密码）
+│   ├── forms.py                 # 表单（登录、注册）
+│   └── urls.py                  # 用户路由配置
+├── database_management/         # 数据库管理脚本
+│   ├── init_database.py         # 初始化数据库（导入题库+创建管理员）
+│   ├── clear_database.py        # 清空数据库
+│   ├── add_questions_from_json.py  # 从JSON导入题库
+│   ├── populate_personality_data.py # 导入16种人格类型数据
+│   └── validate_scoring_rules.py   # 验证计分规则
+├── data/                        # 数据文件目录
+│   └── questions_standard_mbti_93.json  # 标准MBTI 93题JSON格式题库
+├── templates/                   # 模板文件
+│   ├── base.html                # 基础模板
+│   ├── users/                   # 用户相关模板
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   └── password_change.html
+│   └── mbti/                    # MBTI相关模板
+│       ├── home.html
+│       ├── test.html
+│       └── result.html
+├── static/                      # 静态文件
+│   └── css/
+│       └── style.css            # 样式文件
+└── screenshots/                 # 项目截图
 ```
 
 ## 🎨 界面展示
-以下截图均位于 `screenshots/` 目录，命名与 `django-auth-system/README.md` 风格一致：
+以下截图均位于 `screenshots/` 目录：
 
 ### 主页（Index）
 ![主页 1](screenshots/index1.png)
@@ -155,10 +227,13 @@ mbti-system/
 | `/mbti/submit/` | POST | 提交答案并计算结果 |
 | `/mbti/result/` | GET | 结果展示 |
 
-## 📊 结果计算说明（概要）
-- 评分基于 Likert 量表，标准化为 [-2..+2] 并按题目倾向方向加权累加至维度。
-- 四个维度：IE、SN、TF、JP；分数的正负决定最终类型的字母选择。
-- 置信度按各维度平均绝对分值归一化（0..1），用于辅助解释可靠性。
+## 📊 结果计算说明
+本项目使用**标准MBTI 93题计分规则**：
+- **计分方式**：每题选择A或B，按照标准MBTI规则累加维度分数
+- **四个维度**：IE（外向-内向）、SN（感觉-直觉）、TF（思考-情感）、JP（判断-知觉）
+- **类型判定**：每个维度选择分数较高的一方，同分时按规则选择（E/I同分选I，S/N同分选N，T/F同分选F，J/P同分选P）
+- **置信度计算**：基于各维度的分数差异，用于评估结果的可靠性
+- 详细计分逻辑参见 `mbti/services_standard.py`
 
 ## 🔐 安全特性
 - CSRF 保护、会话管理
@@ -166,9 +241,17 @@ mbti-system/
 - 基于消息框的统一错误与成功提示
 
 ## ❗ 常见问题
-- `@vite/client` 404：项目在 `mbti_site/urls.py` 中提供占位路由，开发环境下避免控制台报错。
-- PDF 字体乱码：Windows 下自动尝试注册常见中文字体；如仍异常可在代码中自定义字体路径。
-- 静态文件：开发环境确保 `DEBUG=True`；生产环境需收集静态文件并配置服务器。
+
+**PDF 字体乱码**：
+- Windows 下系统会自动尝试注册常见中文字体
+- 如仍出现乱码，可在代码中自定义字体路径（修改 `mbti/views.py` 中的 `result_pdf_view` 函数）
+
+**静态文件**：
+- 开发环境确保 `DEBUG=True`，Django会自动处理静态文件
+- 生产环境需运行 `python manage.py collectstatic` 收集静态文件并配置服务器
+
+**数据库问题**：
+- 如果数据库迁移出错，可以删除 `db.sqlite3` 和 `mbti/migrations/` 目录下除 `__init__.py` 外的文件，然后重新运行 `makemigrations` 和 `migrate`
 
 ## 🚀 生产部署（示例）
 ```bash
@@ -190,7 +273,7 @@ ssh -T git@github.com
 ```
 - 在项目根目录初始化并设置远程为 SSH：
 ```bash
-cd mbti-system
+cd mbti-test
 git init
 git config user.name "Your Name"
 git config user.email "your_email@example.com"

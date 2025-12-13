@@ -21,13 +21,18 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
+    "mbti_site.middleware.IsolatedSessionMiddleware",  # 使用自定义session中间件，隔离admin和用户前端
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# CSRF设置：允许从不同域名访问（解决后台和前台同时登录的问题）
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_HTTPONLY = False  # 允许JavaScript访问CSRF token
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
 
 ROOT_URLCONF = "mbti_site.urls"
 
@@ -81,6 +86,10 @@ LOGOUT_REDIRECT_URL = "users:login"
 PDF_FONT_PATH = os.getenv("PDF_FONT_PATH", r"C:\\Windows\\Fonts\\msyh.ttf")
 
 # 日志配置（参考 django-auth-system），过滤开发环境下的 /@vite/client 噪音
+# 确保logs目录存在
+LOGS_DIR = BASE_DIR / 'logs'
+LOGS_DIR.mkdir(exist_ok=True)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -104,7 +113,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/django.log'),
+            'filename': str(LOGS_DIR / 'django.log'),
             'formatter': 'verbose',
             'encoding': 'utf-8',
             'filters': ['exclude_vite_client'],

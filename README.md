@@ -191,6 +191,9 @@ mbti-test/
 ### 注册页面
 ![注册](screenshots/register.png)
 
+### 测试页面
+![测试页面](screenshots/test.png)
+
 ### 测试详情
 ![测试详情](screenshots/test_info.png)
 

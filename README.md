@@ -198,7 +198,7 @@ mbti-test/
 ![测试结果](screenshots/test_result.png)
 
 ### PDF 测试报告
-![测试报告 1](screenshots/test_report.png)
+![测试报告 1](screenshots/test_report1.png)
 ![测试报告 2](screenshots/test_report2.png)
 
 ## 🧭 使用指南

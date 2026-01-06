@@ -2,6 +2,16 @@
 
 一个基于 Django 的 MBTI 性格测试系统，支持登录、分页答题、进度自动保存、结果计算与 PDF 导出。
 
+## 🌐 在线体验
+
+**👉 立即体验：[http://best-mbti-test.xin/](http://best-mbti-test.xin/)**
+
+无需安装，直接在线测试你的 MBTI 性格类型！3-5 分钟即可获得详细的性格分析报告。
+
+> **备案信息**：京ICP备2025157088号
+
+---
+
 ## 🚀 功能特性
 - 用户注册、登录、登出，统一的消息提示（成功/失败原因）
 - MBTI 测试分页（每页 10 题），返回上一页保留答案
@@ -192,7 +202,7 @@ mbti-test/
 ![注册](screenshots/register.png)
 
 ### 测试页面
-![测试页面](screenshots/test.png)
+![注册](screenshots/test.png)
 
 ### 测试详情
 ![测试详情](screenshots/test_info.png)

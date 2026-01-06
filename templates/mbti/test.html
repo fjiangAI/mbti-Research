@@ -4,751 +4,343 @@
 {% block title %}MBTI 性格测试{% endblock %}
 
 {% block content %}
-<div class="container mt-4" id="test-container"
-      data-questions-on-page="{{ page_obj.object_list|length }}"
-      data-current-page="{{ current_page }}"
-      data-total-pages="{{ total_pages }}"
-      data-total-questions="{{ total_questions }}"
-      data-per-page="{{ page_obj.paginator.per_page }}"
-      data-next-page="{% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}{% endif %}">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card border-0 shadow-lg rounded-4">
-                <div class="card-header bg-white border-0 pb-0 pt-4">
-                    <h3 class="text-center fw-bold mb-3" style="color: #667eea;">MBTI 性格测试</h3>
-                    <div class="progress mt-3 mb-3" style="height: 20px; border-radius: 10px;">
-                        {% widthratio current_page total_pages 100 as progress_width %}
-                        <div class="progress-bar" role="progressbar" 
-                             data-width="{{ progress_width }}"
-                             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px;"
-                             aria-valuenow="{{ current_page }}" 
-                             aria-valuemin="0" 
-                             aria-valuemax="{{ total_pages }}">
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <span class="text-muted">第 {{ current_page }} 页 / 共 {{ total_pages }} 页</span>
-                        <span class="text-muted">已完成 <span id="progress-text">0</span> / {{ total_questions }} 题</span>
-                    </div>
-                </div>
-                <div class="card-body px-3 px-md-4 py-4">
-                    <form method="post" action="{% url 'mbti:submit' %}" id="testForm">
-                        {% csrf_token %}
-                        
-                        {% for item in questions_with_options %}
-                        <div class="question-card mb-4 p-3 p-md-4">
-                            <h5 class="question-title mb-3">
-                                <span class="question-number">{{ forloop.counter0|add:page_obj.start_index }}.</span>
-                                {{ item.question_text }}
-                            </h5>
-                            
-                            {% if use_standard_mbti %}
-                            {# 标准MBTI：A/B两个选项 #}
-                            <div class="standard-mbti-options mt-4">
-                                {% if item.option_a and item.option_b %}
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="option-card option-a" for="q{{ item.question.id }}_A">
-                                            <input type="radio" 
-                                                   name="q_{{ item.question.id }}" 
-                                                   id="q{{ item.question.id }}_A" 
-                                                   value="1"
-                                                   class="form-check-input"
-                                                   {% if saved_answers|get_item:item.question.id|stringformat:"s" == "1" %}checked{% endif %}>
-                                            <div class="option-label">
-                                                <span class="option-letter">A</span>
-                                                <span class="option-text">{{ item.option_a }}</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="option-card option-b" for="q{{ item.question.id }}_B">
-                                            <input type="radio" 
-                                                   name="q_{{ item.question.id }}" 
-                                                   id="q{{ item.question.id }}_B" 
-                                                   value="2"
-                                                   class="form-check-input"
-                                                   {% if saved_answers|get_item:item.question.id|stringformat:"s" == "2" %}checked{% endif %}>
-                                            <div class="option-label">
-                                                <span class="option-letter">B</span>
-                                                <span class="option-text">{{ item.option_b }}</span>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                {% else %}
-                                <div class="alert alert-warning">题目格式不正确，请检查题库</div>
-                                {% endif %}
-                            </div>
-                            {% else %}
-                            {# 原有Likert量表格式 #}
-                            <div class="likert-scale">
-                                <div class="scale-container d-flex justify-content-center align-items-end">
-                                    <!-- 非常同意标签和第一个最大按钮 -->
-                                    <div class="d-flex flex-column align-items-center mx-2">
-                                        <span class="agree-label text-success fw-bold mb-2">非常同意</span>
-                                        <div class="scale-option text-center">
-                                            <input class="form-check-input scale-radio d-none" type="radio" 
-                                                   name="q_{{ item.question.id }}" 
-                                                   id="q{{ item.question.id }}_1" 
-                                                   value="1"
-                                                   {% if saved_answers|get_item:item.question.id|stringformat:"s" == "1" %}checked{% endif %}>
-                                            <label class="scale-circle scale-1" for="q{{ item.question.id }}_1">
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- 中间的按钮 -->
-                                    {% for value in "23456"|make_list %}
-                                    <div class="scale-option text-center mx-2">
-                                        <input class="form-check-input scale-radio d-none" type="radio" 
-                                               name="q_{{ item.question.id }}" 
-                                               id="q{{ item.question.id }}_{{ value }}" 
-                                               value="{{ value }}"
-                                               {% if saved_answers|get_item:item.question.id|stringformat:"s" == value %}checked{% endif %}>
-                                        <label class="scale-circle scale-{{ value }}" for="q{{ item.question.id }}_{{ value }}">
-                                        </label>
-                                    </div>
-                                    {% endfor %}
-                                    
-                                    <!-- 非常不同意标签和第七个最大按钮 -->
-                                    <div class="d-flex flex-column align-items-center mx-2">
-                                        <span class="disagree-label text-danger fw-bold mb-2">非常不同意</span>
-                                        <div class="scale-option text-center">
-                                            <input class="form-check-input scale-radio d-none" type="radio" 
-                                                   name="q_{{ item.question.id }}" 
-                                                   id="q{{ item.question.id }}_7" 
-                                                   value="7"
-                                                   {% if saved_answers|get_item:item.question.id|stringformat:"s" == "7" %}checked{% endif %}>
-                                            <label class="scale-circle scale-7" for="q{{ item.question.id }}_7">
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-
-                        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
-                            <div>
-                                {% if page_obj.has_previous %}
-                                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.retake %}&retake=true{% endif %}" 
-                                       class="btn btn-outline-primary rounded-pill px-4" id="prevBtn">
-                                        ← 上一页
-                                    </a>
-                                {% endif %}
-                            </div>
-                            
-                            <div>
-                                {% if page_obj.has_next %}
-                                    <button type="button" class="btn rounded-pill px-4 text-white fw-semibold" id="nextBtn"
-                                            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
-                                        下一页 →
-                                    </button>
-                                {% else %}
-                                    <button type="submit" class="btn rounded-pill px-4 text-white fw-semibold" id="submitBtn"
-                                            style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); border: none; box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);">
-                                        ✓ 提交测试
-                                    </button>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+<div class="container test-container" id="test-container"
+     data-questions-on-page="{{ page_obj.object_list|length }}"
+     data-current-page="{{ current_page }}"
+     data-total-pages="{{ total_pages }}"
+     data-total-questions="{{ total_questions }}"
+     data-per-page="{{ page_obj.paginator.per_page }}"
+     data-next-page="{% if page_obj.has_next %}{{ page_obj.next_page_number }}{% else %}{% endif %}"
+     data-use-standard="{{ use_standard_mbti|yesno:'true,false' }}">
+  
+  <!-- 测试头部 -->
+  <div class="test-header">
+    <h1 class="test-title">MBTI 性格测试</h1>
+  </div>
+  
+  <!-- 进度条区域 -->
+  <div class="test-progress-wrapper">
+    <div class="test-progress-info">
+      <span class="test-progress-text">第 {{ current_page }} 页 / 共 {{ total_pages }} 页</span>
+      <span class="test-progress-count">已完成 <span id="progress-text">0</span> / {{ total_questions }} 题</span>
     </div>
+    <div class="progress">
+      {% widthratio current_page total_pages 100 as progress_width %}
+      <div class="progress-bar" role="progressbar" 
+           id="main-progress-bar"
+           style="width: {{ progress_width }}%"
+           aria-valuenow="{{ current_page }}" 
+           aria-valuemin="0" 
+           aria-valuemax="{{ total_pages }}">
+      </div>
+    </div>
+  </div>
+  
+  <!-- 测试表单 -->
+  <form method="post" action="{% url 'mbti:submit' %}" id="testForm">
+    {% csrf_token %}
+    
+    {% if use_standard_mbti %}
+      <!-- 标准MBTI A/B选项模式 -->
+      {% for item in questions_with_options %}
+      <div class="question-card fade-in-up" style="animation-delay: {{ forloop.counter0|add:0 }}00ms;">
+        <div class="question-number">{{ forloop.counter0|add:page_obj.start_index }}</div>
+        <h2 class="question-title">{{ item.question_text }}</h2>
+        
+        <div class="options-container">
+          <!-- 选项 A -->
+          <label class="option-card {% if saved_answers|get_item:item.question.id|stringformat:'s' == '1' %}selected{% endif %}" 
+                 for="q{{ item.question.id }}_a">
+            <input type="radio" 
+                   class="option-radio" 
+                   name="q_{{ item.question.id }}" 
+                   id="q{{ item.question.id }}_a" 
+                   value="1"
+                   {% if saved_answers|get_item:item.question.id|stringformat:"s" == "1" %}checked{% endif %}>
+            <div class="option-label">A</div>
+            <div class="option-text">{{ item.option_a }}</div>
+          </label>
+          
+          <!-- 选项 B -->
+          <label class="option-card {% if saved_answers|get_item:item.question.id|stringformat:'s' == '2' %}selected{% endif %}" 
+                 for="q{{ item.question.id }}_b">
+            <input type="radio" 
+                   class="option-radio" 
+                   name="q_{{ item.question.id }}" 
+                   id="q{{ item.question.id }}_b" 
+                   value="2"
+                   {% if saved_answers|get_item:item.question.id|stringformat:"s" == "2" %}checked{% endif %}>
+            <div class="option-label">B</div>
+            <div class="option-text">{{ item.option_b }}</div>
+          </label>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <!-- 非标准模式（兼容旧版） -->
+      {% for question in page_obj %}
+      <div class="question-card fade-in-up" style="animation-delay: {{ forloop.counter0|add:0 }}00ms;">
+        <div class="question-number">{{ forloop.counter0|add:page_obj.start_index }}</div>
+        <h2 class="question-title">{{ question.text }}</h2>
+        
+        <div class="options-container">
+          <label class="option-card {% if saved_answers|get_item:question.id|stringformat:'s' == '1' %}selected{% endif %}" 
+                 for="q{{ question.id }}_a">
+            <input type="radio" 
+                   class="option-radio" 
+                   name="q_{{ question.id }}" 
+                   id="q{{ question.id }}_a" 
+                   value="1"
+                   {% if saved_answers|get_item:question.id|stringformat:"s" == "1" %}checked{% endif %}>
+            <div class="option-label">A</div>
+            <div class="option-text">同意</div>
+          </label>
+          
+          <label class="option-card {% if saved_answers|get_item:question.id|stringformat:'s' == '2' %}selected{% endif %}" 
+                 for="q{{ question.id }}_b">
+            <input type="radio" 
+                   class="option-radio" 
+                   name="q_{{ question.id }}" 
+                   id="q{{ question.id }}_b" 
+                   value="2"
+                   {% if saved_answers|get_item:question.id|stringformat:"s" == "2" %}checked{% endif %}>
+            <div class="option-label">B</div>
+            <div class="option-text">不同意</div>
+          </label>
+        </div>
+      </div>
+      {% endfor %}
+    {% endif %}
+    
+    <!-- 导航按钮 -->
+    <div class="test-navigation">
+      <div>
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" 
+             class="btn btn-outline-primary test-nav-btn rounded-pill" 
+             id="prevBtn">
+            ← 上一页
+          </a>
+        {% else %}
+          <span></span>
+        {% endif %}
+      </div>
+      
+      <div>
+        {% if page_obj.has_next %}
+          <button type="button" class="btn btn-primary test-nav-btn rounded-pill" id="nextBtn">
+            下一页 →
+          </button>
+        {% else %}
+          <button type="submit" class="btn btn-primary test-nav-btn rounded-pill" id="submitBtn">
+            🎉 提交测试
+          </button>
+        {% endif %}
+      </div>
+    </div>
+  </form>
 </div>
 
-<style>
-.scale-container {
-    display: flex;
-    justify-content: center;
-    align-items: end;
-    gap: 15px;
-    padding: 20px 0;
-}
+{% endblock %}
 
-.scale-label {
-    font-weight: bold;
-    color: #495057;
-    margin: 0 10px;
-    align-self: center;
-}
-
-.agree-label {
-    color: #28a745;
-}
-
-.disagree-label {
-    color: #6f42c1;
-}
-
-.scale-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.scale-circle {
-    display: inline-block;
-    border-radius: 50%;
-    border: 3px solid #ddd;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-/* 按程度大小排列：特大-大-中-小-中-大-特大 */
-.scale-circle.scale-1 { 
-    width: 60px; 
-    height: 60px; 
-    border-color: #28a745;
-    background: linear-gradient(135deg, #28a745, #20c997);
-}
-
-.scale-circle.scale-2 { 
-    width: 50px; 
-    height: 50px; 
-    border-color: #28a745;
-    background: linear-gradient(135deg, #40c463, #28a745);
-}
-
-.scale-circle.scale-3 { 
-    width: 40px; 
-    height: 40px; 
-    border-color: #28a745;
-    background: linear-gradient(135deg, #5dd675, #40c463);
-}
-
-.scale-circle.scale-4 { 
-    width: 30px; 
-    height: 30px; 
-    border-color: #6c757d;
-    background: linear-gradient(135deg, #adb5bd, #6c757d);
-}
-
-.scale-circle.scale-5 { 
-    width: 40px; 
-    height: 40px; 
-    border-color: #6f42c1;
-    background: linear-gradient(135deg, #9c6bdb, #6f42c1);
-}
-
-.scale-circle.scale-6 { 
-    width: 50px; 
-    height: 50px; 
-    border-color: #6f42c1;
-    background: linear-gradient(135deg, #8a5cf5, #6f42c1);
-}
-
-.scale-circle.scale-7 { 
-    width: 60px; 
-    height: 60px; 
-    border-color: #6f42c1;
-    background: linear-gradient(135deg, #6f42c1, #5a2d91);
-}
-
-.scale-radio:checked + .scale-circle {
-    transform: scale(1.2);
-    box-shadow: 0 0 15px rgba(0,123,255,0.5);
-    border-color: #007bff;
-}
-
-.scale-circle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-.question-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    border: 2px solid #e5e7eb !important;
-    border-radius: 16px !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
-}
-
-.question-title {
-    color: #495057;
-    font-weight: 600;
-}
-
-#validation-message {
-    background-color: #fff3cd;
-    border: 1px solid #ffeaa7;
-    color: #856404;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    display: none;
-}
-
-/* 标准MBTI A/B选项样式 */
-.standard-mbti-options .option-card {
-    display: block;
-    border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 1.25rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: #fff;
-    height: 100%;
-    margin: 0;
-}
-
-.standard-mbti-options .option-card:hover {
-    border-color: #667eea;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-    transform: translateY(-2px);
-}
-
-.standard-mbti-options .option-card.option-a:hover {
-    border-color: #48bb78;
-    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
-}
-
-.standard-mbti-options .option-card.option-b:hover {
-    border-color: #9f7aea;
-    box-shadow: 0 4px 12px rgba(159, 122, 234, 0.2);
-}
-
-.standard-mbti-options .option-card input[type="radio"] {
-    display: none;
-}
-
-.standard-mbti-options .option-card.option-a:has(input[type="radio"]:checked) {
-    border-color: #48bb78;
-    background: linear-gradient(135deg, #f0fff4 0%, #dcfce7 100%);
-    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.15);
-}
-
-.standard-mbti-options .option-card.option-b:has(input[type="radio"]:checked) {
-    border-color: #9f7aea;
-    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-    box-shadow: 0 4px 12px rgba(159, 122, 234, 0.15);
-}
-
-.standard-mbti-options .option-label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    margin: 0;
-}
-
-.standard-mbti-options .option-letter {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    color: white;
-    font-weight: 700;
-    font-size: 1rem;
-    margin-right: 1rem;
-    flex-shrink: 0;
-}
-
-.standard-mbti-options .option-a .option-letter {
-    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-}
-
-.standard-mbti-options .option-b .option-letter {
-    background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
-}
-
-.standard-mbti-options .option-text {
-    flex: 1;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #2d3748;
-}
-
-/* 响应式优化 */
-@media (max-width: 768px) {
-    .question-card {
-        padding: 1rem !important;
-    }
-    
-    .standard-mbti-options .option-card {
-        padding: 1rem !important;
-    }
-    
-    .option-letter {
-        width: 32px !important;
-        height: 32px !important;
-        font-size: 0.875rem !important;
-    }
-    
-    .option-text {
-        font-size: 0.9rem !important;
-    }
-}
-
-@media (max-width: 576px) {
-    .question-card {
-        padding: 0.75rem !important;
-    }
-    
-    .standard-mbti-options .option-card {
-        padding: 0.75rem !important;
-    }
-    
-    .option-letter {
-        width: 28px !important;
-        height: 28px !important;
-        font-size: 0.75rem !important;
-        margin-right: 0.75rem !important;
-    }
-    
-    .option-text {
-        font-size: 0.875rem !important;
-    }
-    
-    .btn {
-        padding: 0.5rem 1rem !important;
-        font-size: 0.9rem !important;
-    }
-}
-</style>
-
+{% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('testForm');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const submitBtn = document.getElementById('submitBtn');
-    const container = document.getElementById('test-container');
-    const questionsOnPage = parseInt(container.dataset.questionsOnPage) || 10;
-    const perPage = parseInt(container.dataset.perPage) || 10;
-    const currentPage = parseInt(container.dataset.currentPage) || 1;
-    const totalPages = parseInt(container.dataset.totalPages) || 1;
-    const totalQuestions = parseInt(container.dataset.totalQuestions) || 88;
-    const nextPage = container.dataset.nextPage;
-    
-    if (!container) {
-        return;
-    }
-    
-    // 创建验证消息元素（移除原有的顶部消息）
-    let validationMessage = document.getElementById('validation-message');
-    if (validationMessage) {
-        validationMessage.remove();
-    }
-    
-    // 验证当前页面是否完成
-    function validateCurrentPage() {
-        const answeredQuestions = form.querySelectorAll('input[type="radio"]:checked').length;
-        const actualQuestions = form.querySelectorAll('.question-card').length;
-        const isPageComplete = answeredQuestions >= actualQuestions;
-        
-        // 更新按钮样式但不禁用按钮，让用户可以点击触发验证
-        if (nextBtn) {
-            if (isPageComplete) {
-                nextBtn.style.opacity = '1';
-                nextBtn.style.cursor = 'pointer';
-            } else {
-                nextBtn.style.opacity = '0.6';
-                nextBtn.style.cursor = 'not-allowed';
-            }
-        }
-        
-        if (submitBtn) {
-            if (isPageComplete) {
-                submitBtn.style.opacity = '1';
-                submitBtn.style.cursor = 'pointer';
-            } else {
-                submitBtn.style.opacity = '0.6';
-                submitBtn.style.cursor = 'not-allowed';
-            }
-        }
-        
-        return isPageComplete;
-    }
-    
-    // 显示弹框提示并定位到未完成的题目
-    function showValidationAlert() {
-        const unansweredQuestions = [];
-        const questionCards = form.querySelectorAll('.question-card');
-        
-        questionCards.forEach((card, index) => {
-            const radios = card.querySelectorAll('input[type="radio"]');
-            const isAnswered = Array.from(radios).some(radio => radio.checked);
-            if (!isAnswered) {
-                // 获取题目标题中的题目编号
-                const titleElement = card.querySelector('.question-title');
-                const titleText = titleElement ? titleElement.textContent : '';
-                const questionNumber = titleText.split('.')[0];
-                
-                unansweredQuestions.push({
-                    element: card,
-                    number: questionNumber
-                });
-            }
-        });
-        
-        if (unansweredQuestions.length > 0) {
-            // 自动定位到第一个未完成的题目
-            const firstUnanswered = unansweredQuestions[0].element;
-            firstUnanswered.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
-            });
-            
-            // 高亮显示未完成的题目
-            firstUnanswered.style.border = '2px solid #dc3545';
-            firstUnanswered.style.backgroundColor = '#fff5f5';
-            
-            // 3秒后移除高亮
-            setTimeout(() => {
-                firstUnanswered.style.border = '';
-                firstUnanswered.style.backgroundColor = '';
-            }, 3000);
-            
-            return false;
-        }
-        return true;
-    }
-    
-    // 获取CSRF token（兼容多种方式，全局函数）
-    function getCSRFToken() {
-        // 方式1：从表单中获取
-        const formToken = document.querySelector('[name=csrfmiddlewaretoken]');
-        if (formToken) return formToken.value;
-        
-        // 方式2：从cookie中获取
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-            const [name, value] = cookie.trim().split('=');
-            if (name === 'csrftoken') return value;
-        }
-        
-        // 方式3：从meta标签获取（如果有）
-        const metaToken = document.querySelector('meta[name=csrf-token]');
-        if (metaToken) return metaToken.getAttribute('content');
-        
-        return '';
-    }
-    
-    // 自动保存功能 - 返回Promise确保保存完成
-    function saveProgress() {
-        return new Promise((resolve, reject) => {
-            const formData = new FormData(form);
-            const answers = {};
-            
-            for (let [key, value] of formData.entries()) {
-                if (key.startsWith('q_')) {
-                    answers[key] = value;
-                }
-            }
-            
-            // 如果没有答案，直接resolve
-            if (Object.keys(answers).length === 0) {
-                resolve({status: 'success', saved: 0});
-                return;
-            }
-            
-            // 保存到session和数据库
-            fetch('{% url "mbti:save_progress" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken()
-                },
-                body: JSON.stringify({answers: answers})
-            }).then(response => {
-                if (response.status === 403) {
-                    throw new Error('CSRF验证失败，请刷新页面后重试');
-                }
-                return response.json();
-            }).then(data => {
-                if (data.status === 'success') {
-                    resolve(data);
-                } else {
-                    reject(new Error(data.message || '保存失败'));
-                }
-            }).catch(error => {
-                reject(error);
-            });
-        });
-    }
-    
-    // 保存所有页面的答案（用于提交前确保所有答案都在session中）
-    function saveAllProgress() {
-        return new Promise((resolve, reject) => {
-            const formData = new FormData(form);
-            const answers = {};
-            
-            for (let [key, value] of formData.entries()) {
-                if (key.startsWith('q_')) {
-                    answers[key] = value;
-                }
-            }
-            
-            fetch('{% url "mbti:save_progress" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': getCSRFToken()
-                },
-                body: JSON.stringify({answers: answers})
-            }).then(response => {
-                if (response.status === 403) {
-                    throw new Error('CSRF验证失败，请刷新页面后重试');
-                }
-                return response.json();
-            }).then(data => {
-                if (data.status === 'success') {
-                    resolve(data);
-                } else {
-                    reject(new Error(data.message || '保存失败'));
-                }
-            }).catch(error => {
-                reject(error);
-            });
-        });
-    }
-    
-    // 监听选项变化
-    form.addEventListener('change', function(e) {
-        if (e.target.type === 'radio') {
-            // 异步保存，不阻塞UI
-            saveProgress().catch(function(error) {
-                // 静默处理错误，避免干扰用户体验
-            });
-            updateProgress();
-            validateCurrentPage();
-        }
+  const form = document.getElementById('testForm');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const container = document.getElementById('test-container');
+  
+  const questionsOnPage = parseInt(container.dataset.questionsOnPage) || 10;
+  const perPage = parseInt(container.dataset.perPage) || 10;
+  const currentPage = parseInt(container.dataset.currentPage) || 1;
+  const totalPages = parseInt(container.dataset.totalPages) || 1;
+  const totalQuestions = parseInt(container.dataset.totalQuestions) || 93;
+  const useStandard = container.dataset.useStandard === 'true';
+  
+  // 选项卡片点击效果
+  document.querySelectorAll('.option-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      // 获取同组的所有选项卡片
+      const container = this.closest('.options-container');
+      const cards = container.querySelectorAll('.option-card');
+      
+      // 移除所有选中状态
+      cards.forEach(function(c) {
+        c.classList.remove('selected');
+      });
+      
+      // 添加当前选中状态
+      this.classList.add('selected');
+      
+      // 保存进度
+      saveProgress();
+      updateProgress();
+      validateCurrentPage();
     });
+  });
+  
+  // 验证当前页面是否完成
+  function validateCurrentPage() {
+    const answeredQuestions = form.querySelectorAll('input[type="radio"]:checked').length;
+    const actualQuestions = form.querySelectorAll('.question-card').length;
+    const isPageComplete = answeredQuestions >= actualQuestions;
     
-    // 更新进度显示
-    function updateProgress() {
-        const answeredQuestions = form.querySelectorAll('input[type="radio"]:checked').length;
-        const actualQuestions = form.querySelectorAll('.question-card').length;
-        const completedPreviousPages = (currentPage - 1) * perPage;
-        const totalCompleted = completedPreviousPages + answeredQuestions;
-        
-        // 更新进度条
-        const progressBar = document.querySelector('.progress-bar');
-        if (progressBar) {
-            const percentage = Math.round((totalCompleted / totalQuestions) * 100);
-            progressBar.style.width = percentage + '%';
-            progressBar.setAttribute('aria-valuenow', totalCompleted);
-        }
-        
-        // 更新进度文本 - 显示当前页面进度
-        const progressText = document.querySelector('#progress-text');
-        if (progressText) {
-            // 显示累计完成的题目数量（包括已完成的前置页）
-            progressText.textContent = totalCompleted;
-        }
-        
-        // 验证当前页面
-        validateCurrentPage();
-    }
-    
-    // 设置进度条宽度
-    function setProgressBarWidth() {
-        const progressBars = document.querySelectorAll('.progress-bar[data-width]');
-        progressBars.forEach(function(bar) {
-            const width = bar.getAttribute('data-width');
-            bar.style.width = width + '%';
-        });
-    }
-    
-    // 页面加载时初始化
-    setProgressBarWidth();
-    updateProgress();
-    validateCurrentPage();
-    
-    // 下一页按钮点击事件
+    // 更新按钮样式
     if (nextBtn) {
-        nextBtn.addEventListener('click', function(e) {
-            e.preventDefault(); // 阻止默认行为
-            
-            if (!validateCurrentPage()) {
-                showValidationAlert();
-                return false;
-            }
-            
-            // 如果验证通过，先保存进度（等待完成），然后跳转
-            saveProgress().then(function() {
-                // 检查是否是最后一页
-                if (currentPage >= totalPages) {
-                    // 如果是最后一页，不跳转，让用户点击提交按钮
-                    return false;
-                } else {
-                    // 不是最后一页，跳转到下一页
-                    const nextPageNumber = currentPage + 1;
-                    // 检查URL中是否有retake参数，如果有则保留
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const retake = urlParams.get('retake');
-                    let nextUrl = '?page=' + nextPageNumber;
-                    if (retake === 'true') {
-                        nextUrl += '&retake=true';
-                    }
-                    window.location.href = nextUrl;
-                }
-            }).catch(function(error) {
-                // 保存失败时提示用户
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'alert alert-danger alert-dismissible fade show';
-                errorMsg.innerHTML = '<strong>保存失败</strong> 请重试。如果问题持续，请联系管理员。<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-                form.insertBefore(errorMsg, form.firstChild);
-                setTimeout(() => errorMsg.remove(), 5000);
-            });
-        });
-    }
-
-    // 上一页按钮点击事件：跳转前保存当前页答案，避免丢失
-    if (prevBtn) {
-        prevBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            // 先保存进度（等待完成），然后跳转
-            saveProgress().then(function() {
-                // 检查URL中是否有retake参数，如果有则保留
-                const urlParams = new URLSearchParams(window.location.search);
-                const retake = urlParams.get('retake');
-                let href = prevBtn.getAttribute('href');
-                if (retake === 'true' && !href.includes('retake=true')) {
-                    href += (href.includes('?') ? '&' : '?') + 'retake=true';
-                }
-                window.location.href = href;
-            }).catch(function(error) {
-                // 保存失败时提示用户
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'alert alert-danger alert-dismissible fade show';
-                errorMsg.innerHTML = '<strong>保存失败</strong> 请重试。如果问题持续，请联系管理员。<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-                form.insertBefore(errorMsg, form.firstChild);
-                setTimeout(() => errorMsg.remove(), 5000);
-            });
-        });
+      if (isPageComplete) {
+        nextBtn.classList.remove('btn-outline-primary');
+        nextBtn.classList.add('btn-primary');
+      } else {
+        nextBtn.classList.remove('btn-primary');
+        nextBtn.classList.add('btn-outline-primary');
+      }
     }
     
-    // 表单提交事件
-    form.addEventListener('submit', function(e) {
-        e.preventDefault(); // 先阻止默认提交
-        
-        if (!validateCurrentPage()) {
-            showValidationAlert();
-            return false;
-        }
-        
-        // 提交前先保存当前页答案，确保session中有所有答案
-        saveAllProgress().then(function() {
-            // 保存成功后提交表单
-            form.submit();
-        }).catch(function(error) {
-            // 保存失败时提示用户
-            const errorMsg = document.createElement('div');
-            errorMsg.className = 'alert alert-danger alert-dismissible fade show';
-            errorMsg.innerHTML = '<strong>保存答案失败</strong> 请重试。如果问题持续，请联系管理员。<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-            form.insertBefore(errorMsg, form.firstChild);
-            setTimeout(() => errorMsg.remove(), 5000);
+    if (submitBtn) {
+      if (isPageComplete) {
+        submitBtn.classList.add('shadow-glow');
+      } else {
+        submitBtn.classList.remove('shadow-glow');
+      }
+    }
+    
+    return isPageComplete;
+  }
+  
+  // 显示验证提示并定位到未完成题目
+  function showValidationAlert() {
+    const unansweredQuestions = [];
+    const questionCards = form.querySelectorAll('.question-card');
+    
+    questionCards.forEach(function(card) {
+      const radios = card.querySelectorAll('input[type="radio"]');
+      const isAnswered = Array.from(radios).some(function(radio) { return radio.checked; });
+      if (!isAnswered) {
+        const numberEl = card.querySelector('.question-number');
+        const questionNumber = numberEl ? numberEl.textContent : '';
+        unansweredQuestions.push({
+          element: card,
+          number: questionNumber
         });
-        
-        return false;
+      }
     });
+    
+    if (unansweredQuestions.length > 0) {
+      alert('请完成第 ' + unansweredQuestions.map(function(q) { return q.number; }).join('、') + ' 题后再继续');
+      
+      // 定位到第一个未完成的题目
+      const firstUnanswered = unansweredQuestions[0].element;
+      firstUnanswered.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      });
+      
+      // 高亮显示
+      firstUnanswered.style.borderColor = 'var(--error)';
+      firstUnanswered.style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.3)';
+      
+      setTimeout(function() {
+        firstUnanswered.style.borderColor = '';
+        firstUnanswered.style.boxShadow = '';
+      }, 3000);
+      
+      return false;
+    }
+    return true;
+  }
+  
+  // 保存进度
+  function saveProgress() {
+    const formData = new FormData(form);
+    const answers = {};
+    
+    for (let pair of formData.entries()) {
+      if (pair[0].startsWith('q_')) {
+        answers[pair[0]] = pair[1];
+      }
+    }
+    
+    fetch('{% url "mbti:save_progress" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: JSON.stringify({answers: answers})
+    });
+  }
+  
+  // 更新进度显示
+  function updateProgress() {
+    const answeredQuestions = form.querySelectorAll('input[type="radio"]:checked').length;
+    const completedPreviousPages = (currentPage - 1) * perPage;
+    const totalCompleted = completedPreviousPages + answeredQuestions;
+    
+    // 更新进度条
+    const progressBar = document.getElementById('main-progress-bar');
+    if (progressBar) {
+      const percentage = Math.round((totalCompleted / totalQuestions) * 100);
+      progressBar.style.width = percentage + '%';
+    }
+    
+    // 更新进度文本
+    const progressText = document.getElementById('progress-text');
+    if (progressText) {
+      progressText.textContent = totalCompleted;
+    }
+    
+    validateCurrentPage();
+  }
+  
+  // 初始化
+  updateProgress();
+  validateCurrentPage();
+  
+  // 下一页按钮
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      if (!validateCurrentPage()) {
+        showValidationAlert();
+        return false;
+      }
+      
+      saveProgress();
+      setTimeout(function() {
+        if (currentPage >= totalPages) {
+          alert('这是最后一页，请点击"提交测试"按钮完成测试。');
+          return false;
+        } else {
+          window.location.href = '?page=' + (currentPage + 1);
+        }
+      }, 100);
+    });
+  }
+  
+  // 上一页按钮
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      saveProgress();
+      var href = prevBtn.getAttribute('href');
+      setTimeout(function() {
+        window.location.href = href;
+      }, 100);
+    });
+  }
+  
+  // 表单提交
+  form.addEventListener('submit', function(e) {
+    if (!validateCurrentPage()) {
+      e.preventDefault();
+      showValidationAlert();
+      return false;
+    }
+    saveProgress();
+  });
 });
 </script>
 {% endblock %}

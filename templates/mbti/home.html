@@ -1,45 +1,40 @@
 {% extends 'base.html' %}
 {% block title %}主页 - MBTI性格测试{% endblock %}
+
 {% block content %}
 <!-- Hero区域 -->
 <section class="hero-section py-5">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-8 text-center">
-        <h1 class="display-4 fw-bold mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-          发现你的性格类型
+        <h1 class="hero-title fade-in">
+          发现你的性格密码
         </h1>
-        <p class="lead text-muted mb-4">专业的 MBTI 人格测试，3-5 分钟即可获得详细的性格分析报告</p>
-        <div class="d-flex gap-3 justify-content-center flex-wrap">
-    {% if user.is_authenticated %}
+        <p class="hero-subtitle fade-in delay-100">
+          专业的 MBTI 人格测试，3-5 分钟即可获得详细的性格分析报告
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap fade-in delay-200">
+          {% if user.is_authenticated %}
             {% if has_result %}
-              <a class="btn btn-lg px-4 py-3 rounded-pill text-white fw-semibold" 
-                 href="{% url 'mbti:result' %}" 
-                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);">
-                查看我的结果
+              <a class="btn btn-primary btn-lg rounded-pill px-4 py-3" href="{% url 'mbti:result' %}">
+                📊 查看我的结果
               </a>
-              <a class="btn btn-lg btn-outline-primary px-4 py-3 rounded-pill fw-semibold" 
-                 href="{% url 'mbti:test' %}?retake=true">
-                重新测试
+              <a class="btn btn-outline-primary btn-lg rounded-pill px-4 py-3" href="{% url 'mbti:test' %}?retake=true">
+                🔄 重新测试
               </a>
             {% else %}
-              <a class="btn btn-lg px-4 py-3 rounded-pill text-white fw-semibold" 
-                 href="{% url 'mbti:test' %}" 
-                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);">
-                开始测试
+              <a class="btn btn-primary btn-lg rounded-pill px-4 py-3" href="{% url 'mbti:test' %}">
+                🚀 开始测试
               </a>
             {% endif %}
-    {% else %}
-            <a class="btn btn-lg px-4 py-3 rounded-pill text-white fw-semibold" 
-               href="{% url 'users:login' %}" 
-               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);">
-              登录后开始测试
+          {% else %}
+            <a class="btn btn-primary btn-lg rounded-pill px-4 py-3" href="{% url 'users:login' %}">
+              🚀 登录后开始测试
             </a>
-            <a class="btn btn-lg btn-outline-primary px-4 py-3 rounded-pill fw-semibold" 
-               href="{% url 'users:register' %}">
-              注册
+            <a class="btn btn-outline-primary btn-lg rounded-pill px-4 py-3" href="{% url 'users:register' %}">
+              📝 注册账号
             </a>
-    {% endif %}
+          {% endif %}
         </div>
       </div>
     </div>
@@ -47,61 +42,76 @@
 </section>
 
 <!-- MBTI介绍部分 -->
-<section class="intro-section py-5 bg-white">
+<section class="intro-section py-5">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-10">
-        <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
-          <h2 class="text-center fw-bold mb-4" style="color: #667eea;">什么是MBTI人格测试？</h2>
-    <div class="intro-content">
-            <p class="lead mb-4"><strong>MBTI（Myers-Briggs Type Indicator）</strong>是世界上最权威的人格测试工具之一，基于心理学家卡尔·荣格的人格类型理论发展而来。</p>
-        
-            <h3 class="fw-bold mt-4 mb-3" style="color: #667eea;">🎯 测试原理</h3>
-        <p>MBTI通过四个维度来分析个人的心理偏好：</p>
+        <div class="card card-elevated rounded-xl p-4 p-md-5">
+          <h2 class="text-center fw-bold mb-4 text-gradient">什么是MBTI人格测试？</h2>
+          
+          <div class="intro-content">
+            <p class="lead mb-4">
+              <strong>MBTI（Myers-Briggs Type Indicator）</strong>是世界上最权威的人格测试工具之一，基于心理学家卡尔·荣格的人格类型理论发展而来。
+            </p>
+            
+            <h3 class="fw-bold mt-4 mb-3 text-gradient">🎯 测试原理</h3>
+            <p>MBTI通过四个维度来分析个人的心理偏好：</p>
             <ul class="list-unstyled ms-3">
-              <li class="mb-2"><strong>外向(E) vs 内向(I)</strong> - 你如何获得能量和关注焦点</li>
-              <li class="mb-2"><strong>感觉(S) vs 直觉(N)</strong> - 你如何收集和处理信息</li>
-              <li class="mb-2"><strong>思考(T) vs 情感(F)</strong> - 你如何做出决策</li>
-              <li class="mb-2"><strong>判断(J) vs 知觉(P)</strong> - 你如何组织生活和工作</li>
-        </ul>
-        
-            <h3 class="fw-bold mt-5 mb-3" style="color: #667eea;">✨ 测试价值</h3>
-            <div class="row g-4 mt-2">
-              <div class="col-md-6 col-lg-3">
-                <div class="text-center p-4 rounded-3" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
-                  <div class="fs-1 mb-3">🧭</div>
-                  <h5 class="fw-bold mb-2">自我认知</h5>
-                  <p class="text-muted small mb-0">深入了解自己的性格特点、优势和成长空间</p>
+              <li class="mb-2 d-flex align-items-start">
+                <span class="me-2">•</span>
+                <span><strong>外向(E) vs 内向(I)</strong> - 你如何获得能量和关注焦点</span>
+              </li>
+              <li class="mb-2 d-flex align-items-start">
+                <span class="me-2">•</span>
+                <span><strong>感觉(S) vs 直觉(N)</strong> - 你如何收集和处理信息</span>
+              </li>
+              <li class="mb-2 d-flex align-items-start">
+                <span class="me-2">•</span>
+                <span><strong>思考(T) vs 情感(F)</strong> - 你如何做出决策</span>
+              </li>
+              <li class="mb-2 d-flex align-items-start">
+                <span class="me-2">•</span>
+                <span><strong>判断(J) vs 知觉(P)</strong> - 你如何组织生活和工作</span>
+              </li>
+            </ul>
+            
+            <h3 class="fw-bold mt-5 mb-4 text-gradient">✨ 测试价值</h3>
+            <div class="row g-4">
+              <div class="col-6 col-lg-3">
+                <div class="value-card h-100" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: var(--radius-lg);">
+                  <div class="value-icon">🧭</div>
+                  <h5 class="value-title">自我认知</h5>
+                  <p class="value-desc">深入了解自己的性格特点与成长空间</p>
                 </div>
               </div>
-              <div class="col-md-6 col-lg-3">
-                <div class="text-center p-4 rounded-3" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);">
-                  <div class="fs-1 mb-3">🤝</div>
-                  <h5 class="fw-bold mb-2">人际关系</h5>
-                  <p class="text-muted small mb-0">改善沟通方式，建立更和谐的人际关系</p>
+              <div class="col-6 col-lg-3">
+                <div class="value-card h-100" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: var(--radius-lg);">
+                  <div class="value-icon">🤝</div>
+                  <h5 class="value-title">人际关系</h5>
+                  <p class="value-desc">改善沟通方式，建立和谐关系</p>
                 </div>
               </div>
-              <div class="col-md-6 col-lg-3">
-                <div class="text-center p-4 rounded-3" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
-                  <div class="fs-1 mb-3">💼</div>
-                  <h5 class="fw-bold mb-2">职业发展</h5>
-                  <p class="text-muted small mb-0">找到适合的职业方向和工作环境</p>
-          </div>
-          </div>
-              <div class="col-md-6 col-lg-3">
-                <div class="text-center p-4 rounded-3" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);">
-                  <div class="fs-1 mb-3">📈</div>
-                  <h5 class="fw-bold mb-2">个人成长</h5>
-                  <p class="text-muted small mb-0">制定针对性的自我提升计划</p>
-          </div>
-          </div>
-        </div>
-        
-            <div class="mt-4 d-flex flex-wrap gap-2 justify-content-center">
-              <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">✅ 科学权威</span>
-              <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">✅ 快速便捷</span>
-              <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">✅ 详细报告</span>
-              <span class="badge rounded-pill px-3 py-2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">✅ 实用指导</span>
+              <div class="col-6 col-lg-3">
+                <div class="value-card h-100" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: var(--radius-lg);">
+                  <div class="value-icon">💼</div>
+                  <h5 class="value-title">职业发展</h5>
+                  <p class="value-desc">找到适合的职业方向与工作环境</p>
+                </div>
+              </div>
+              <div class="col-6 col-lg-3">
+                <div class="value-card h-100" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: var(--radius-lg);">
+                  <div class="value-icon">📈</div>
+                  <h5 class="value-title">个人成长</h5>
+                  <p class="value-desc">制定针对性的自我提升计划</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-5 d-flex flex-wrap gap-2 justify-content-center">
+              <span class="feature-badge">✅ 科学权威</span>
+              <span class="feature-badge">✅ 快速便捷</span>
+              <span class="feature-badge">✅ 详细报告</span>
+              <span class="feature-badge">✅ 实用指导</span>
             </div>
           </div>
         </div>
@@ -114,75 +124,100 @@
 <section class="types-section py-5" id="types">
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-lg-10">
-        <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
-          <h2 class="text-center fw-bold mb-3" style="color: #667eea;">16种性格类型预览</h2>
+      <div class="col-lg-11">
+        <div class="card card-elevated rounded-xl p-4 p-md-5">
+          <h2 class="text-center fw-bold mb-2 text-gradient">16种性格类型</h2>
           <p class="text-center text-muted mb-4">MBTI 将人格分为 16 种类型，每种类型都有独特的特征和优势</p>
           
           <div class="row g-3 g-md-4">
             {% for type_info in type_list %}
             <div class="col-6 col-md-4 col-lg-3">
-              <div class="type-card h-100 p-3 rounded-3 border text-center transition-all" style="background: #f8fafc; border-color: #e5e7eb !important;">
-                <div class="fs-2 mb-2">{{ type_info.icon }}</div>
-                <div class="fw-bold mb-1">{{ type_info.title }}</div>
-                <div class="text-primary fw-bold small mb-2">{{ type_info.code }}</div>
-                <div class="text-muted small" style="font-size: 0.75rem; line-height: 1.4;">{{ type_info.desc }}</div>
-      </div>
-      </div>
+              <div class="type-card h-100">
+                <div class="type-icon">{{ type_info.icon }}</div>
+                <div class="type-title">{{ type_info.title }}</div>
+                <div class="type-code">{{ type_info.code }}</div>
+                <div class="type-desc">{{ type_info.desc }}</div>
+              </div>
+            </div>
             {% endfor %}
-      </div>
+          </div>
           
-          <div class="text-center mt-5 p-4 rounded-3" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);">
-            <p class="text-muted mb-3">完整的16种MBTI人格类型，每种都有独特的特征和优势</p>
+          <div class="text-center mt-5 p-4 rounded-xl" style="background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);">
+            <p class="text-muted mb-3">完成测试，发现属于你的独特性格类型</p>
             {% if user.is_authenticated %}
               {% if has_result %}
-                <a class="btn btn-primary px-4 py-2 rounded-pill me-2" href="{% url 'mbti:result' %}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
-                  查看我的测试结果
+                <a class="btn btn-primary rounded-pill px-4 py-2 me-2" href="{% url 'mbti:result' %}">
+                  📊 查看我的结果
                 </a>
-                <a class="btn btn-outline-primary px-4 py-2 rounded-pill" href="{% url 'mbti:test' %}?retake=true">重新测试</a>
+                <a class="btn btn-outline-primary rounded-pill px-4 py-2" href="{% url 'mbti:test' %}?retake=true">
+                  🔄 重新测试
+                </a>
               {% else %}
-                <a class="btn btn-primary px-4 py-2 rounded-pill" href="{% url 'mbti:test' %}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
-                  立即测试，发现你的类型
+                <a class="btn btn-primary rounded-pill px-4 py-2" href="{% url 'mbti:test' %}">
+                  🚀 立即开始测试
                 </a>
               {% endif %}
             {% else %}
-              <a class="btn btn-primary px-4 py-2 rounded-pill" href="{% url 'users:login' %}" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
-                登录开始测试
+              <a class="btn btn-primary rounded-pill px-4 py-2" href="{% url 'users:login' %}">
+                🚀 登录开始测试
               </a>
             {% endif %}
-      </div>
-      </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<style>
-.type-card {
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.type-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.15) !important;
-  border-color: #667eea !important;
-}
-
-.transition-all {
-  transition: all 0.3s ease;
-}
-
-@media (max-width: 576px) {
-  .hero-section h1 {
-    font-size: 2rem !important;
-  }
-  
-  .intro-section .card,
-  .types-section .card {
-    padding: 1.5rem !important;
-  }
-}
-</style>
-
+<!-- 常见问题 -->
+<section class="faq-section py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h2 class="text-center fw-bold mb-4 text-gradient">常见问题</h2>
+        
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item border-0 mb-3 rounded-lg overflow-hidden shadow-sm">
+            <h2 class="accordion-header">
+              <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                MBTI测试准确吗？
+              </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                MBTI是一种自我报告式的性格评估工具，准确性取决于你的自我认知程度。建议在放松的状态下，根据真实的自己而非理想中的自己来回答问题。测试结果可以作为了解自己的参考，但不应作为绝对的判断标准。
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item border-0 mb-3 rounded-lg overflow-hidden shadow-sm">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                测试需要多长时间？
+              </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                完整的测试包含93道题目，大约需要10-15分钟完成。请确保在安静的环境中进行测试，并按照第一直觉回答每个问题。
+              </div>
+            </div>
+          </div>
+          
+          <div class="accordion-item border-0 mb-3 rounded-lg overflow-hidden shadow-sm">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                我的性格类型会改变吗？
+              </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                MBTI认为人格类型是相对稳定的，但随着年龄增长、经历变化，某些维度的偏好可能会有所调整。建议定期进行测试，观察自己的变化和成长。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

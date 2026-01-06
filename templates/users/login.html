@@ -1,62 +1,61 @@
 {% extends 'base.html' %}
+
 {% block title %}登录 - MBTI测试{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-      <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
-        <div class="text-center mb-4">
-          <h2 class="fw-bold mb-2" style="color: #667eea;">欢迎回来</h2>
-          <p class="text-muted">登录您的账户开始测试</p>
-        </div>
-        
-        <form method="post" autocomplete="off">
-          {% csrf_token %}
-          
-          <div class="mb-3">
-            <label for="username" class="form-label fw-semibold">用户名</label>
-            <input type="text" 
-                   class="form-control form-control-lg" 
-                   id="username" 
-                   name="username" 
-                   placeholder="请输入用户名" 
-                   required 
-                   autofocus>
-          </div>
-          
-          <div class="mb-4">
-            <label for="login_password" class="form-label fw-semibold">密码</label>
-            <div class="position-relative">
-              <input type="password" 
-                     class="form-control form-control-lg" 
-                     id="login_password" 
-                     name="password" 
-                     placeholder="请输入密码" 
-                     required>
-              <button type="button" 
-                      class="btn btn-link position-absolute end-0 top-50 translate-middle-y pe-3 text-muted toggle-visibility" 
-                      data-target="login_password"
-                      style="text-decoration: none; border: none; background: none;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-          
-          <button type="submit" 
-                  class="btn btn-lg w-100 text-white fw-semibold rounded-pill mb-3" 
-                  style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);">
-            登录
-          </button>
-          
-          <div class="text-center">
-            <p class="text-muted mb-0">没有账号？<a href="{% url 'users:register' %}" class="text-decoration-none fw-semibold" style="color: #667eea;">立即注册</a></p>
-          </div>
-        </form>
+<div class="auth-container">
+  <div class="auth-card fade-in">
+    <div class="auth-header">
+      <div class="mb-3">
+        <span style="font-size: 3rem;">🧠</span>
       </div>
+      <h1 class="auth-title text-gradient">欢迎回来</h1>
+      <p class="auth-subtitle">登录您的账户，继续探索性格密码</p>
     </div>
+    
+    <form method="post" autocomplete="off">
+      {% csrf_token %}
+      
+      <div class="mb-3">
+        <label for="username" class="form-label">用户名</label>
+        <input type="text" 
+               class="form-control form-control-lg" 
+               id="username" 
+               name="username" 
+               placeholder="请输入用户名" 
+               required 
+               autofocus>
+      </div>
+      
+      <div class="mb-4">
+        <label for="login_password" class="form-label">密码</label>
+        <div class="position-relative">
+          <input type="password" 
+                 class="form-control form-control-lg" 
+                 id="login_password" 
+                 name="password" 
+                 placeholder="请输入密码" 
+                 required
+                 style="padding-right: 48px;">
+          <button type="button" 
+                  class="toggle-visibility position-absolute end-0 top-50 translate-middle-y me-2" 
+                  data-target="login_password">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mb-3">
+        登录
+      </button>
+      
+      <div class="auth-footer">
+        没有账号？<a href="{% url 'users:register' %}">立即注册</a>
+      </div>
+    </form>
   </div>
 </div>
 

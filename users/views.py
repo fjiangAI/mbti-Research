@@ -11,14 +11,25 @@ def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            # 使用create_user自动处理密码哈希
-            user = User.objects.create_user(
-                username=form.cleaned_data['username'],
-                email=form.cleaned_data['email'],
-                password=form.cleaned_data['password'],
-            )
-            messages.success(request, '注册成功，请登录')
-            return redirect('users:login')
+            try:
+                # 使用create_user自动处理密码哈希
+                user = User.objects.create_user(
+                    username=form.cleaned_data['username'],
+                    email=form.cleaned_data['email'],
+                    password=form.cleaned_data['password'],
+                )
+                messages.success(request, '注册成功，请登录')
+                return redirect('users:login')
+            except Exception as e:
+                messages.error(request, f'注册失败：{str(e)}')
+        else:
+            # 显示表单验证错误
+            for field, errors in form.errors.items():
+                for error in errors:
+                    if field == '__all__':
+                        messages.error(request, error)
+                    else:
+                        messages.error(request, f'{error}')
     else:
         form = RegisterForm()
     return render(request, 'users/register.html', {'form': form})

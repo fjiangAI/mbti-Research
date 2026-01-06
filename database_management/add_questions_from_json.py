@@ -26,28 +26,36 @@ def load_questions_from_json(json_path):
 def get_question_dimension_and_pole(question_id):
     """根据题目编号从计分规则中推断dimension和keyed_pole"""
     # 检查E-I维度
+    # E_A: 选A得E分的题目
+    # I_B: 选B得E分的题目（反向计分）
     if question_id in StandardMBTIScoringService.E_SCORING_RULES['E_A']:
         return 'IE', 'E'
-    elif question_id in StandardMBTIScoringService.E_SCORING_RULES['E_B']:
-        return 'IE', 'E'
+    elif question_id in StandardMBTIScoringService.E_SCORING_RULES['I_B']:
+        return 'IE', 'I'
     
     # 检查S-N维度
+    # S_A: 选A得S分的题目
+    # N_B: 选B得S分的题目（反向计分）
     if question_id in StandardMBTIScoringService.S_SCORING_RULES['S_A']:
         return 'SN', 'S'
-    elif question_id in StandardMBTIScoringService.S_SCORING_RULES['S_B']:
-        return 'SN', 'S'
+    elif question_id in StandardMBTIScoringService.S_SCORING_RULES['N_B']:
+        return 'SN', 'N'
     
     # 检查T-F维度
+    # T_A: 选A得T分的题目
+    # F_B: 选B得T分的题目（反向计分）
     if question_id in StandardMBTIScoringService.T_SCORING_RULES['T_A']:
         return 'TF', 'T'
-    elif question_id in StandardMBTIScoringService.T_SCORING_RULES['T_B']:
-        return 'TF', 'T'
+    elif question_id in StandardMBTIScoringService.T_SCORING_RULES['F_B']:
+        return 'TF', 'F'
     
     # 检查J-P维度
+    # J_A: 选A得J分的题目
+    # P_B: 选B得J分的题目（反向计分）
     if question_id in StandardMBTIScoringService.J_SCORING_RULES['J_A']:
         return 'JP', 'J'
-    elif question_id in StandardMBTIScoringService.J_SCORING_RULES['J_B']:
-        return 'JP', 'J'
+    elif question_id in StandardMBTIScoringService.J_SCORING_RULES['P_B']:
+        return 'JP', 'P'
     
     # 默认值（不应该发生）
     return 'IE', 'I'

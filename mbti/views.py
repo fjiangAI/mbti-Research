@@ -23,8 +23,8 @@ def home_view(request):
         latest_result = Result.objects.filter(user=request.user).order_by('-created_at').first()
         has_result = latest_result is not None
     
-    # 16种MBTI类型数据
-    type_list = [
+    # 16种MBTI类型基础数据
+    type_base = [
         {'icon': '🧠', 'title': '建筑师', 'code': 'INTJ', 'desc': '富有策略与远见，擅长系统化思考与规划'},
         {'icon': '🔬', 'title': '逻辑学家', 'code': 'INTP', 'desc': '好奇心强、热爱探索，追求逻辑与知识的边界'},
         {'icon': '🧭', 'title': '指挥官', 'code': 'ENTJ', 'desc': '果断、组织能力强，擅长目标导向与资源协调'},
@@ -42,6 +42,24 @@ def home_view(request):
         {'icon': '⚡', 'title': '企业家', 'code': 'ESTP', 'desc': '聪明、精力充沛、善于感知的企业家，真正享受生活'},
         {'icon': '🎭', 'title': '娱乐家', 'code': 'ESFP', 'desc': '自发的、精力充沛的娱乐家，生活在他们周围从不无聊'},
     ]
+    
+    # 从数据库获取详细的类型档案信息
+    type_list = []
+    for item in type_base:
+        profile = TypeProfile.objects.filter(code__iexact=item['code']).first()
+        type_data = {
+            'icon': item['icon'],
+            'title': item['title'],
+            'code': item['code'],
+            'desc': item['desc'],
+            'description': profile.description if profile else item['desc'],
+            'strengths': profile.strengths if profile else '',
+            'growth': profile.growth if profile else '',
+            'career_suggestions': profile.career_suggestions if profile else '',
+            'work_style': profile.work_style if profile else '',
+            'interpersonal_relations': profile.interpersonal_relations if profile else '',
+        }
+        type_list.append(type_data)
     
     return render(request, 'mbti/home.html', {
         'has_result': has_result,

@@ -132,7 +132,18 @@
           <div class="row g-3 g-md-4">
             {% for type_info in type_list %}
             <div class="col-6 col-md-4 col-lg-3">
-              <div class="type-card h-100">
+              <div class="type-card h-100" 
+                   onclick="showTypeDetail(this)"
+                   data-code="{{ type_info.code }}"
+                   data-icon="{{ type_info.icon }}"
+                   data-title="{{ type_info.title }}"
+                   data-desc="{{ type_info.desc }}"
+                   data-description="{{ type_info.description }}"
+                   data-strengths="{{ type_info.strengths }}"
+                   data-growth="{{ type_info.growth }}"
+                   data-career="{{ type_info.career_suggestions }}"
+                   data-work="{{ type_info.work_style }}"
+                   data-relations="{{ type_info.interpersonal_relations }}">
                 <div class="type-icon">{{ type_info.icon }}</div>
                 <div class="type-title">{{ type_info.title }}</div>
                 <div class="type-code">{{ type_info.code }}</div>
@@ -168,6 +179,70 @@
     </div>
   </div>
 </section>
+
+<!-- 类型详情弹窗 - 使用 Bootstrap Modal -->
+<div class="modal fade" id="typeDetailModal" tabindex="-1" aria-labelledby="typeDetailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content type-detail-modal-content">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-0">
+        <!-- 头部信息 -->
+        <div class="text-center mb-4">
+          <span class="type-detail-icon" id="modalIcon"></span>
+          <h2 class="type-detail-title" id="modalTitle"></h2>
+          <div class="type-detail-code" id="modalCode"></div>
+          <p class="type-detail-desc" id="modalDesc"></p>
+        </div>
+        
+        <!-- 详细内容 -->
+        <div class="type-detail-sections">
+          <div class="type-detail-section" id="sectionDescription">
+            <h5>📖 性格概述</h5>
+            <p id="modalDescription"></p>
+          </div>
+          
+          <div class="type-detail-section" id="sectionStrengths">
+            <h5>🌟 性格优势</h5>
+            <p id="modalStrengths"></p>
+          </div>
+          
+          <div class="type-detail-section" id="sectionGrowth">
+            <h5>📈 成长建议</h5>
+            <p id="modalGrowth"></p>
+          </div>
+          
+          <div class="type-detail-section" id="sectionCareer">
+            <h5>💼 职业建议</h5>
+            <p id="modalCareer"></p>
+          </div>
+          
+          <div class="type-detail-section" id="sectionWork">
+            <h5>🏢 工作风格</h5>
+            <p id="modalWork"></p>
+          </div>
+          
+          <div class="type-detail-section" id="sectionRelations">
+            <h5>👥 人际关系</h5>
+            <p id="modalRelations"></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        {% if user.is_authenticated %}
+          <a class="btn btn-primary rounded-pill w-100" href="{% url 'mbti:test' %}">
+            🚀 开始测试，发现你的类型
+          </a>
+        {% else %}
+          <a class="btn btn-primary rounded-pill w-100" href="{% url 'users:login' %}">
+            🚀 登录后开始测试
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- 常见问题 -->
 <section class="faq-section py-5">
@@ -221,3 +296,54 @@
   </div>
 </section>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+// 点击显示类型详情弹窗
+function showTypeDetail(element) {
+  // 获取数据
+  const icon = element.dataset.icon || '';
+  const title = element.dataset.title || '';
+  const code = element.dataset.code || '';
+  const desc = element.dataset.desc || '';
+  const description = element.dataset.description || '';
+  const strengths = element.dataset.strengths || '';
+  const growth = element.dataset.growth || '';
+  const career = element.dataset.career || '';
+  const work = element.dataset.work || '';
+  const relations = element.dataset.relations || '';
+  
+  // 填充数据
+  document.getElementById('modalIcon').textContent = icon;
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalCode').textContent = code;
+  document.getElementById('modalDesc').textContent = desc;
+  
+  // 填充详细内容并控制显示
+  setSection('sectionDescription', 'modalDescription', description);
+  setSection('sectionStrengths', 'modalStrengths', strengths);
+  setSection('sectionGrowth', 'modalGrowth', growth);
+  setSection('sectionCareer', 'modalCareer', career);
+  setSection('sectionWork', 'modalWork', work);
+  setSection('sectionRelations', 'modalRelations', relations);
+  
+  // 使用 Bootstrap Modal API 显示弹窗
+  var modal = new bootstrap.Modal(document.getElementById('typeDetailModal'));
+  modal.show();
+}
+
+function setSection(sectionId, contentId, content) {
+  const section = document.getElementById(sectionId);
+  const contentEl = document.getElementById(contentId);
+  if (section && contentEl) {
+    if (content && content.trim()) {
+      contentEl.textContent = content;
+      section.style.display = 'block';
+    } else {
+      section.style.display = 'none';
+    }
+  }
+}
+</script>
+{% endblock %}
+

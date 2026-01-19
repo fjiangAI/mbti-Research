@@ -244,10 +244,10 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // 维度条动画
-  const bars = document.querySelectorAll('.dimension-fill');
+  // 维度条动画（新版选择器）
+  var bars = document.querySelectorAll('.dimension-fill-left, .dimension-fill-right');
   bars.forEach(function(bar, index) {
-    const width = bar.style.width;
+    var width = bar.style.width;
     bar.style.width = '0';
     setTimeout(function() {
       bar.style.width = width;

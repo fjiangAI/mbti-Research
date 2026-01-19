@@ -163,8 +163,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.option-card').forEach(function(card) {
     card.addEventListener('click', function() {
       // 获取同组的所有选项卡片
-      const container = this.closest('.options-container');
-      const cards = container.querySelectorAll('.option-card');
+      var optContainer = this.closest('.options-container');
+      var cards = optContainer.querySelectorAll('.option-card');
       
       // 移除所有选中状态
       cards.forEach(function(c) {
@@ -173,6 +173,12 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // 添加当前选中状态
       this.classList.add('selected');
+      
+      // 【关键修复】确保 radio 被选中
+      var radio = this.querySelector('input[type="radio"]');
+      if (radio) {
+        radio.checked = true;
+      }
       
       // 保存进度
       saveProgress();

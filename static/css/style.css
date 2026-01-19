@@ -854,38 +854,6 @@ body::before {
   color: var(--gray-400);
 }
 
-/* 旧版维度样式保留兼容 */
-.dimension-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-sm);
-}
-
-.dimension-name {
-  font-weight: 600;
-  color: var(--gray-700);
-}
-
-.dimension-value {
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.dimension-bar {
-  height: 12px;
-  background: var(--gray-200);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-  position: relative;
-}
-
-.dimension-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--primary-start), var(--primary-end));
-  border-radius: var(--radius-full);
-  transition: width 1s ease;
-}
 
 /* ==================== 优势与成长高亮卡片 ==================== */
 .highlight-card {
@@ -1011,39 +979,6 @@ body::before {
   font-size: 0.9375rem;
 }
 
-/* 旧版多维度分析卡片（保留兼容） */
-.analysis-card {
-  background: white;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-normal);
-  height: 100%;
-}
-
-.analysis-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-
-.analysis-card-header {
-  padding: var(--space-md) var(--space-lg);
-  color: white;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.analysis-card-body {
-  padding: var(--space-lg);
-}
-
-.analysis-card-body p {
-  color: var(--gray-600);
-  line-height: 1.7;
-  margin: 0;
-}
 
 /* ==================== 首页特定样式 ==================== */
 .hero-section {

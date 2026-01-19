@@ -715,7 +715,7 @@ def result_pdf_view(request):
                 letter = 'S' if v > 0 else 'N'
             elif k == 'TF':
                 letter = 'T' if v > 0 else 'F'
-    else:
+            else:
                 letter = 'J' if v > 0 else 'P'
             story.append(Paragraph(exp[letter], list_style))
     

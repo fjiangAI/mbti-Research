@@ -66,9 +66,9 @@
   --transition-normal: 0.3s ease;
   --transition-slow: 0.5s ease;
   
-  /* 字体 - 国内优先使用系统字体，外部字体作为增强 */
-  --font-display: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* 字体 */
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 /* ==================== 基础重置 ==================== */

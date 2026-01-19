@@ -114,3 +114,4 @@ class MBTIScoringService:
         
         return confidence
 
+

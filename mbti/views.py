@@ -560,7 +560,7 @@ def result_pdf_view(request):
         textColor=colors.HexColor('#1e3a5f'), spaceBefore=12, spaceAfter=6,
         leftIndent=10
     )
-    
+
     # 列表项样式
     list_style = ParagraphStyle(
         'List', fontName=base_font, fontSize=10,
@@ -584,7 +584,7 @@ def result_pdf_view(request):
         title='MBTI人格测试报告'
     )
     story = []
-
+    
     # ==================== 第一页：封面 ====================
     story.append(Spacer(1, 3*cm))
     story.append(Paragraph('MBTI 人格测试报告', title_style))
@@ -623,7 +623,7 @@ def result_pdf_view(request):
     story.append(info_table)
     
     story.append(PageBreak())
-
+    
     # ==================== 第二页：性格概述 ====================
     story.append(Paragraph('◆ 性格概述', section_style))
     story.append(Spacer(1, 0.3*cm))
@@ -634,7 +634,7 @@ def result_pdf_view(request):
         story.append(Paragraph('暂无详细描述。', body_style))
     
     story.append(Spacer(1, 0.5*cm))
-
+    
     # ==================== 维度分析 ====================
     story.append(Paragraph('◆ 四维度分析', section_style))
     story.append(Spacer(1, 0.3*cm))
@@ -715,12 +715,12 @@ def result_pdf_view(request):
                 letter = 'S' if v > 0 else 'N'
             elif k == 'TF':
                 letter = 'T' if v > 0 else 'F'
-            else:
+    else:
                 letter = 'J' if v > 0 else 'P'
             story.append(Paragraph(exp[letter], list_style))
     
     story.append(Spacer(1, 0.5*cm))
-
+    
     # ==================== 性格优势与发展建议 ====================
     if strengths:
         story.append(Paragraph('◆ 性格优势', section_style))
@@ -751,13 +751,13 @@ def result_pdf_view(request):
         story.append(PageBreak())
         story.append(Paragraph('◆ 多维度深度分析', section_style))
         story.append(Spacer(1, 0.3*cm))
-        
+    
         for title, content in analysis_items:
             if content:
                 story.append(Paragraph(f'<b>• {title}</b>', subsection_style))
                 story.append(Paragraph(content, list_style))
                 story.append(Spacer(1, 0.2*cm))
-
+    
     # ==================== 总结与寄语 ====================
     story.append(Spacer(1, 0.5*cm))
     story.append(Paragraph('◆ 总结与寄语', section_style))
@@ -775,7 +775,7 @@ def result_pdf_view(request):
 希望这份报告能帮助您更好地认识自己，在人生道路上做出更适合自己的选择！'''
     
     story.append(Paragraph(summary_text.replace('\n', '<br/>'), body_style))
-
+    
     # ==================== 页脚 ====================
     story.append(Spacer(1, 2*cm))
     story.append(Paragraph('—' * 40, footer_style))

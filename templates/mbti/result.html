@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load dict_extras %}
 
-{% block title %}测试结果 - {{ result.type_code }}{% endblock %}
+{% block title %}测评结果 - {{ result.type_code }} - MBTI-Research{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -9,7 +9,7 @@
     <!-- 结果展示区域 -->
     <div class="result-hero fade-in">
       <div class="position-relative z-1">
-        <p class="mb-2 opacity-75">🎉 恭喜完成测试！你的性格类型是</p>
+        <p class="mb-2 opacity-75">🎉 恭喜完成测评！你的科研协作画像是</p>
         <div class="result-type-code">{{ result.type_code }}</div>
         {% if profile %}
           <div class="result-type-name">{{ profile.name }}</div>
@@ -20,7 +20,7 @@
     <!-- 类型描述 -->
     {% if profile and profile.description %}
     <div class="card card-elevated rounded-xl p-4 mb-4 fade-in delay-100">
-      <h3 class="fw-bold mb-3 text-gradient">📖 性格概述</h3>
+      <h3 class="fw-bold mb-3 text-gradient">📖 科研画像概述</h3>
       <p class="text-muted mb-0" style="line-height: 1.8;">{{ profile.description }}</p>
     </div>
     {% endif %}
@@ -88,7 +88,7 @@
         <div class="highlight-card highlight-card--success h-100">
           <div class="highlight-card__icon">🌟</div>
           <div class="highlight-card__content">
-            <h4 class="highlight-card__title">性格优势</h4>
+            <h4 class="highlight-card__title">科研协作优势</h4>
             <p class="highlight-card__text">{{ profile.strengths }}</p>
           </div>
         </div>
@@ -116,7 +116,7 @@
         <div class="profile-item">
           <div class="profile-item__header">
             <span class="profile-item__icon">✨</span>
-            <h4 class="profile-item__title">性格特点</h4>
+            <h4 class="profile-item__title">科研偏好特点</h4>
           </div>
           <p class="profile-item__text">{{ profile.personality_traits }}</p>
         </div>
@@ -126,7 +126,7 @@
         <div class="profile-item">
           <div class="profile-item__header">
             <span class="profile-item__icon">💼</span>
-            <h4 class="profile-item__title">工作风格</h4>
+            <h4 class="profile-item__title">研究工作风格</h4>
           </div>
           <p class="profile-item__text">{{ profile.work_style }}</p>
         </div>
@@ -136,7 +136,7 @@
         <div class="profile-item">
           <div class="profile-item__header">
             <span class="profile-item__icon">👥</span>
-            <h4 class="profile-item__title">人际关系</h4>
+            <h4 class="profile-item__title">团队协作方式</h4>
           </div>
           <p class="profile-item__text">{{ profile.interpersonal_relations }}</p>
         </div>
@@ -186,7 +186,7 @@
         <div class="profile-item profile-item--highlight">
           <div class="profile-item__header">
             <span class="profile-item__icon">🚀</span>
-            <h4 class="profile-item__title">职业建议</h4>
+            <h4 class="profile-item__title">科研角色建议</h4>
           </div>
           <p class="profile-item__text">{{ profile.career_suggestions }}</p>
         </div>
@@ -196,7 +196,7 @@
         <div class="profile-item">
           <div class="profile-item__header">
             <span class="profile-item__icon">✨</span>
-            <h4 class="profile-item__title">生活哲学</h4>
+            <h4 class="profile-item__title">研究价值观</h4>
           </div>
           <p class="profile-item__text">{{ profile.life_philosophy }}</p>
         </div>
@@ -221,7 +221,7 @@
         📄 下载PDF报告
       </a>
       <a class="btn btn-outline-primary btn-lg rounded-pill px-4 mb-2" href="{% url 'mbti:test' %}?retake=true">
-        🔄 重新测试
+        🔄 重新测评
       </a>
     </div>
     
@@ -230,10 +230,10 @@
     <div class="text-center py-5">
       <div class="card card-elevated rounded-xl p-5 d-inline-block">
         <div class="fs-1 mb-3">🤔</div>
-        <h3 class="fw-bold mb-3">暂无测试结果</h3>
-        <p class="text-muted mb-4">请先完成MBTI性格测试</p>
+          <h3 class="fw-bold mb-3">暂无测评结果</h3>
+        <p class="text-muted mb-4">请先完成 MBTI-Research 测评</p>
         <a href="{% url 'mbti:test' %}" class="btn btn-primary rounded-pill px-4">
-          🚀 开始测试
+          🚀 开始测评
         </a>
       </div>
     </div>

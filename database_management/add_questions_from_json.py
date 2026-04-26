@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-从JSON文件导入标准MBTI 93题题库
+从JSON文件导入 MBTI-Research 93题题库
 """
 import os
 import sys
@@ -63,15 +63,15 @@ def get_question_dimension_and_pole(question_id):
 def import_questions_from_json(json_path):
     """从JSON文件导入题目到数据库"""
     print("=" * 80)
-    print("从JSON文件导入标准MBTI 93题题库")
+    print("从JSON文件导入 MBTI-Research 93题题库")
     print("=" * 80)
     
     # 获取或创建问卷
     qnn, created = Questionnaire.objects.get_or_create(
         key='mbti_standard_93',
         defaults={
-            'name': '标准MBTI 93题测试',
-            'description': '标准MBTI人格类型测试，共93题',
+            'name': 'MBTI-Research 科研协作测评',
+            'description': '面向AI科研团队的MBTI-Research协作偏好测评，共93题',
             'is_active': True
         }
     )
@@ -79,6 +79,10 @@ def import_questions_from_json(json_path):
     if created:
         print(f"✓ 创建新问卷: {qnn.name}")
     else:
+        qnn.name = 'MBTI-Research 科研协作测评'
+        qnn.description = '面向AI科研团队的MBTI-Research协作偏好测评，共93题'
+        qnn.is_active = True
+        qnn.save(update_fields=['name', 'description', 'is_active'])
         print(f"✓ 使用现有问卷: {qnn.name}")
         # 清除该问卷下的旧题目
         old_count = Question.objects.filter(questionnaire=qnn).count()

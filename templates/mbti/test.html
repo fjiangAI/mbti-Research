@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load dict_extras %}
 
-{% block title %}MBTI 性格测试{% endblock %}
+{% block title %}MBTI-Research 测评{% endblock %}
 
 {% block content %}
 <div class="container test-container" id="test-container"
@@ -15,7 +15,7 @@
   
   <!-- 测试头部 -->
   <div class="test-header">
-    <h1 class="test-title">MBTI 性格测试</h1>
+    <h1 class="test-title">MBTI-Research 测评</h1>
   </div>
   
   <!-- 进度条区域 -->
@@ -133,7 +133,7 @@
           </button>
         {% else %}
           <button type="submit" class="btn btn-primary test-nav-btn rounded-pill" id="submitBtn">
-            🎉 提交测试
+            🎉 提交测评
           </button>
         {% endif %}
       </div>
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function() {
       saveProgress();
       setTimeout(function() {
         if (currentPage >= totalPages) {
-          alert('这是最后一页，请点击"提交测试"按钮完成测试。');
+          alert('这是最后一页，请点击"提交测评"按钮完成测评。');
           return false;
         } else {
           window.location.href = '?page=' + (currentPage + 1);

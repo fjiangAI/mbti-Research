@@ -23,36 +23,41 @@ def home_view(request):
         latest_result = Result.objects.filter(user=request.user).order_by('-created_at').first()
         has_result = latest_result is not None
     
-    # 16种MBTI类型基础数据
+    # 首页卡片的图标和兜底短描述；类型名称与详细描述优先从数据库 TypeProfile 读取。
     type_base = [
-        {'icon': '🧠', 'title': '建筑师', 'code': 'INTJ', 'desc': '富有策略与远见，擅长系统化思考与规划'},
-        {'icon': '🔬', 'title': '逻辑学家', 'code': 'INTP', 'desc': '好奇心强、热爱探索，追求逻辑与知识的边界'},
-        {'icon': '🧭', 'title': '指挥官', 'code': 'ENTJ', 'desc': '果断、组织能力强，擅长目标导向与资源协调'},
-        {'icon': '🎤', 'title': '辩论家', 'code': 'ENTP', 'desc': '思维灵活、善于辩论，热衷挑战与创新观点'},
-        {'icon': '🛡️', 'title': '提倡者', 'code': 'INFJ', 'desc': '理想主义者，富有同情心，追求意义与价值'},
-        {'icon': '🎭', 'title': '调停者', 'code': 'INFP', 'desc': '创造力强、价值观驱动，追求真实与和谐'},
-        {'icon': '🎯', 'title': '主人公', 'code': 'ENFJ', 'desc': '天生的领导者，善于激励他人实现潜能'},
-        {'icon': '🌟', 'title': '竞选者', 'code': 'ENFP', 'desc': '热情洋溢、富有创意，善于发现可能性'},
-        {'icon': '📋', 'title': '物流师', 'code': 'ISTJ', 'desc': '实用主义的事实家，可靠性毋庸置疑'},
-        {'icon': '🛡️', 'title': '守护者', 'code': 'ISFJ', 'desc': '非常专注、温暖的守护者，时刻准备保护爱的人'},
-        {'icon': '📊', 'title': '总经理', 'code': 'ESTJ', 'desc': '出色的管理者，在管理事物或人员方面无与伦比'},
-        {'icon': '🤝', 'title': '执政官', 'code': 'ESFJ', 'desc': '极有同情心、受欢迎、总是热心帮助他人'},
-        {'icon': '🔧', 'title': '鉴赏家', 'code': 'ISTP', 'desc': '大胆而实际的实验家，擅长使用各种工具'},
-        {'icon': '🎨', 'title': '探险家', 'code': 'ISFP', 'desc': '灵活、迷人的艺术家，时刻准备探索新的可能性'},
-        {'icon': '⚡', 'title': '企业家', 'code': 'ESTP', 'desc': '聪明、精力充沛、善于感知的企业家，真正享受生活'},
-        {'icon': '🎭', 'title': '娱乐家', 'code': 'ESFP', 'desc': '自发的、精力充沛的娱乐家，生活在他们周围从不无聊'},
+        {'icon': '🧠', 'title': '研究战略架构师', 'code': 'INTJ', 'desc': '擅长长期路线设计和复杂问题系统化拆解'},
+        {'icon': '🔬', 'title': '理论机制探索者', 'code': 'INTP', 'desc': '擅长追问模型机制、逻辑边界和异常现象'},
+        {'icon': '🧭', 'title': '科研项目指挥官', 'code': 'ENTJ', 'desc': '擅长组织多人协作并推动项目向成果收束'},
+        {'icon': '🎤', 'title': '前沿想法孵化者', 'code': 'ENTP', 'desc': '擅长提出新角度、连接领域并挑战假设'},
+        {'icon': '🛡️', 'title': '愿景整合型导师', 'code': 'INFJ', 'desc': '擅长连接研究意义、团队成长和长期方向'},
+        {'icon': '🎭', 'title': '使命驱动探索者', 'code': 'INFP', 'desc': '擅长发现有价值感和社会意义的深层问题'},
+        {'icon': '🎯', 'title': '团队培养型领导者', 'code': 'ENFJ', 'desc': '擅长激励成员、建立共识并促进团队成长'},
+        {'icon': '🌟', 'title': '跨界创意连接者', 'code': 'ENFP', 'desc': '擅长连接人、场景和跨学科研究机会'},
+        {'icon': '📋', 'title': '实验流程守护者', 'code': 'ISTJ', 'desc': '擅长维护实验复现性、文档和质量标准'},
+        {'icon': '🛡️', 'title': '研究支持协调者', 'code': 'ISFJ', 'desc': '擅长稳定支持团队运行和具体协作细节'},
+        {'icon': '📊', 'title': '项目交付负责人', 'code': 'ESTJ', 'desc': '擅长任务拆解、进度管理和项目落地'},
+        {'icon': '🤝', 'title': '实验室协作组织者', 'code': 'ESFJ', 'desc': '擅长维护协作秩序和团队日常连接'},
+        {'icon': '🔧', 'title': '系统调试攻坚者', 'code': 'ISTP', 'desc': '擅长定位训练、环境和系统中的技术问题'},
+        {'icon': '🎨', 'title': '体验敏感型原型师', 'code': 'ISFP', 'desc': '擅长发现原型、体验和结果呈现中的细节问题'},
+        {'icon': '⚡', 'title': '快速试验攻坚者', 'code': 'ESTP', 'desc': '擅长短周期验证、demo攻关和高压应变'},
+        {'icon': '🎭', 'title': '科研传播激活者', 'code': 'ESFP', 'desc': '擅长成果展示、现场互动和研究传播'},
     ]
     
     # 从数据库获取详细的类型档案信息
     type_list = []
     for item in type_base:
         profile = TypeProfile.objects.filter(code__iexact=item['code']).first()
+        profile_desc = profile.description if profile else ''
+        short_desc = item['desc']
+        if profile_desc:
+            first_sentence = profile_desc.split('。', 1)[0].strip()
+            short_desc = f"{first_sentence}。" if first_sentence else item['desc']
         type_data = {
             'icon': item['icon'],
-            'title': item['title'],
+            'title': profile.name if profile and profile.name else item['title'],
             'code': item['code'],
-            'desc': item['desc'],
-            'description': profile.description if profile else item['desc'],
+            'desc': short_desc,
+            'description': profile_desc or item['desc'],
             'strengths': profile.strengths if profile else '',
             'growth': profile.growth if profile else '',
             'career_suggestions': profile.career_suggestions if profile else '',
@@ -432,7 +437,7 @@ def submit_view(request):
             request.session.modified = True
         
         logger.info(f"User {request.user.username} completed MBTI test, result: {code}, redirecting to result page")
-        messages.success(request, '提交成功，以下是你的测试结果')
+        messages.success(request, '提交成功，以下是你的 MBTI-Research 测评结果')
         return redirect('mbti:result')
         
     except Exception as e:
@@ -581,13 +586,13 @@ def result_pdf_view(request):
         buffer, pagesize=A4, 
         topMargin=2*cm, bottomMargin=2*cm, 
         leftMargin=2*cm, rightMargin=2*cm,
-        title='MBTI人格测试报告'
+        title='MBTI-Research科研协作测评报告'
     )
     story = []
     
     # ==================== 第一页：封面 ====================
     story.append(Spacer(1, 3*cm))
-    story.append(Paragraph('MBTI 人格测试报告', title_style))
+    story.append(Paragraph('MBTI-Research 科研协作测评报告', title_style))
     story.append(Spacer(1, 1*cm))
     
     # 大号类型码
@@ -624,8 +629,8 @@ def result_pdf_view(request):
     
     story.append(PageBreak())
     
-    # ==================== 第二页：性格概述 ====================
-    story.append(Paragraph('◆ 性格概述', section_style))
+    # ==================== 第二页：科研画像概述 ====================
+    story.append(Paragraph('◆ 科研画像概述', section_style))
     story.append(Spacer(1, 0.3*cm))
     
     if description:
@@ -721,9 +726,9 @@ def result_pdf_view(request):
     
     story.append(Spacer(1, 0.5*cm))
     
-    # ==================== 性格优势与发展建议 ====================
+    # ==================== 科研协作优势与发展建议 ====================
     if strengths:
-        story.append(Paragraph('◆ 性格优势', section_style))
+        story.append(Paragraph('◆ 科研协作优势', section_style))
         story.append(Paragraph(strengths, body_style))
         story.append(Spacer(1, 0.5*cm))
     
@@ -734,15 +739,15 @@ def result_pdf_view(request):
 
     # ==================== 多维度深度分析 ====================
     analysis_items = [
-        ('性格特点', getattr(profile, 'personality_traits', '') if profile else ''),
-        ('工作风格', getattr(profile, 'work_style', '') if profile else ''),
-        ('人际关系', getattr(profile, 'interpersonal_relations', '') if profile else ''),
+        ('科研偏好特点', getattr(profile, 'personality_traits', '') if profile else ''),
+        ('研究工作风格', getattr(profile, 'work_style', '') if profile else ''),
+        ('团队协作方式', getattr(profile, 'interpersonal_relations', '') if profile else ''),
         ('情感表达', getattr(profile, 'emotional_expression', '') if profile else ''),
         ('决策方式', getattr(profile, 'decision_making', '') if profile else ''),
         ('压力管理', getattr(profile, 'stress_management', '') if profile else ''),
         ('学习方式', getattr(profile, 'learning_style', '') if profile else ''),
-        ('职业建议', getattr(profile, 'career_suggestions', '') if profile else ''),
-        ('生活哲学', getattr(profile, 'life_philosophy', '') if profile else ''),
+        ('科研角色建议', getattr(profile, 'career_suggestions', '') if profile else ''),
+        ('研究价值观', getattr(profile, 'life_philosophy', '') if profile else ''),
         ('沟通风格', getattr(profile, 'communication_style', '') if profile else ''),
     ]
     
@@ -762,17 +767,17 @@ def result_pdf_view(request):
     story.append(Spacer(1, 0.5*cm))
     story.append(Paragraph('◆ 总结与寄语', section_style))
     
-    summary_text = f'''您的MBTI类型是 {result.type_code} ({profile_name or "待完善"})。
+    summary_text = f'''您的 MBTI-Research 科研协作画像是 {result.type_code} ({profile_name or "待完善"})。
     
-每种人格类型都有其独特的优势和潜在的成长空间。MBTI测试结果仅供参考，帮助您更好地了解自己的性格倾向和偏好。
+每种科研协作画像都有其独特优势和潜在成长空间。MBTI-Research 结果仅供科研协作、自我理解和团队沟通参考，帮助您更好地了解自己的研究偏好、沟通方式和适合承担的协作角色。
 
 请记住：
-• 人格类型不是固定的标签，每个人都是独特的个体
-• 了解自己的倾向有助于在工作、学习和人际关系中做出更明智的选择
-• 接纳自己的特点，同时保持开放的心态去成长和发展
-• 不同的人格类型各有所长，互补协作能创造更大价值
+• 科研画像不是固定标签，更不代表科研能力高低
+• 了解自己的倾向有助于更清楚地沟通、分工和寻求支持
+• 接纳自己的工作方式，同时保持开放心态去训练新的能力
+• 不同画像各有所长，互补协作能提高团队的研究质量
 
-希望这份报告能帮助您更好地认识自己，在人生道路上做出更适合自己的选择！'''
+希望这份报告能帮助您在AI科研合作中更好地理解自己，也帮助导师和团队成员用更合适的方式协作。'''
     
     story.append(Paragraph(summary_text.replace('\n', '<br/>'), body_style))
     
@@ -780,7 +785,7 @@ def result_pdf_view(request):
     story.append(Spacer(1, 2*cm))
     story.append(Paragraph('—' * 40, footer_style))
     story.append(Spacer(1, 0.3*cm))
-    story.append(Paragraph('本报告由 MBTI 人格测试系统生成，仅供参考', footer_style))
+    story.append(Paragraph('本报告由 MBTI-Research 生成，仅供科研协作参考', footer_style))
     story.append(Paragraph(f'报告生成时间：{now_local.strftime("%Y年%m月%d日 %H:%M")}', footer_style))
     story.append(Paragraph('京ICP备2025157088号', footer_style))
 
@@ -790,6 +795,6 @@ def result_pdf_view(request):
 
     from django.http import HttpResponse
     response = HttpResponse(buffer, content_type='application/pdf')
-    filename = f'MBTI测试报告_{request.user.username}_{test_time.strftime("%Y%m%d")}.pdf'
+    filename = f'MBTI-Research报告_{request.user.username}_{test_time.strftime("%Y%m%d")}.pdf'
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response

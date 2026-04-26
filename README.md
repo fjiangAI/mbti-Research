@@ -1,12 +1,16 @@
-# MBTI 性格测试系统
+# MBTI-Research
 
-一个基于 Django 的 MBTI 性格测试系统，支持登录、分页答题、进度自动保存、结果计算与 PDF 导出。
+一个基于 Django 的 AI 科研协作偏好测评系统，支持登录、分页答题、进度自动保存、结果计算与 PDF 导出。题目和结果解释面向硕士研究生、研究助理、博士后和科研助理教授等科研团队成员。
 
 ## 🌐 在线体验
 
-**👉 立即体验：[http://best-mbti-test.xin/](http://best-mbti-test.xin/)**
+部署后可通过你的服务器公网地址或域名访问，例如：
 
-无需安装，直接在线测试你的 MBTI 性格类型！3-5 分钟即可获得详细的性格分析报告。
+```text
+http://你的服务器公网IP:8000/
+```
+
+无需安装，直接在线完成 MBTI-Research 测评，了解你的科研协作画像、沟通方式和适合承担的研究角色。
 
 > **备案信息**：京ICP备2025157088号
 
@@ -14,11 +18,11 @@
 
 ## 🚀 功能特性
 - 用户注册、登录、登出，统一的消息提示（成功/失败原因）
-- MBTI 测试分页（每页 10 题），返回上一页保留答案
+- MBTI-Research 测评分页（每页 10 题），返回上一页保留答案
 - 自动保存答题进度（Session 存储，跨页不丢失）
 - 完成度与进度条展示，未完成时友好提示定位
 - 结果计算与类型码生成（如 INTJ），维度置信度与详情展示
-- 导出测试结果为 PDF 报告（ReportLab，可选安装）
+- 导出测评结果为 PDF 报告（ReportLab，可选安装）
 - 密码输入眼睛图标显示/隐藏，与输入框右侧对齐
 
 
@@ -80,10 +84,10 @@ python manage.py migrate
 # 2. 清空数据库（可选，如果需要完全重置）
 python database_management/clear_database.py
 
-# 3. 初始化数据库（导入标准MBTI 93题题库 + 创建管理员账号）
+# 3. 初始化数据库（导入 MBTI-Research 93题题库 + 创建管理员账号）
 python database_management/init_database.py
 
-# 4. 导入16种人格类型详细数据（可选，推荐）
+# 4. 导入16种科研协作画像详细数据（可选，推荐）
 python database_management/populate_personality_data.py
 ```
 
@@ -97,23 +101,23 @@ python database_management/clear_database.py
 ```
 
 **`init_database.py`** - 初始化数据库
-- 导入标准MBTI 93题题库（从JSON文件）
+- 导入 MBTI-Research 93题题库（从JSON文件）
 - 创建Django后台管理员账号（用户名：`admin`，密码：`admin@123..`）
 ```bash
 python database_management/init_database.py
 ```
 
 **`add_questions_from_json.py`** - 仅导入题库
-- 从JSON格式文件导入标准MBTI 93题题库
+- 从JSON格式文件导入 MBTI-Research 93题题库
 - 不创建管理员账号（推荐使用此脚本单独导入题库）
 ```bash
 python database_management/add_questions_from_json.py
 ```
 > **注意**：这是推荐的题库导入方式，使用JSON格式更清晰易维护。
 
-**`populate_personality_data.py`** - 导入人格类型数据
-- 导入16种MBTI人格类型的详细描述数据
-- 包含丰富的描述信息（性格特点、工作风格、人际关系、职业建议等）
+**`populate_personality_data.py`** - 导入科研协作画像数据
+- 导入16种 MBTI-Research 科研协作画像的详细描述数据
+- 包含丰富的描述信息（科研偏好特点、研究工作风格、团队协作方式、科研角色建议等）
 - 使用 `get_or_create`，可安全重复执行
 ```bash
 python database_management/populate_personality_data.py
@@ -167,7 +171,7 @@ mbti-test/
 │   ├── init_database.py         # 初始化数据库（导入题库+创建管理员）
 │   ├── clear_database.py        # 清空数据库
 │   ├── add_questions_from_json.py  # 从JSON导入题库
-│   ├── populate_personality_data.py # 导入16种人格类型数据
+│   ├── populate_personality_data.py # 导入16种科研协作画像数据
 │   └── validate_scoring_rules.py   # 验证计分规则
 ├── data/                        # 数据文件目录
 │   └── questions_standard_mbti_93.json  # 标准MBTI 93题JSON格式题库
@@ -308,6 +312,7 @@ git push -u origin main
 本项目采用 MIT 许可证。
 
 ## 🙏 致谢
+- 感谢原作者张超武及原项目 `zcw576020095/mbti-test` 提供的 Django 项目基础与实现参考
 - Django 社区
 - Bootstrap 团队
 - ReportLab 项目

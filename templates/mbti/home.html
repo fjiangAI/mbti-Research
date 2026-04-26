@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}主页 - MBTI性格测试{% endblock %}
+{% block title %}主页 - MBTI-Research{% endblock %}
 
 {% block content %}
 <!-- Hero区域 -->
@@ -8,10 +8,10 @@
     <div class="row justify-content-center">
       <div class="col-lg-8 text-center">
         <h1 class="hero-title fade-in">
-          发现你的性格密码
+          了解你的科研协作方式
         </h1>
         <p class="hero-subtitle fade-in delay-100">
-          专业的 MBTI 人格测试，3-5 分钟即可获得详细的性格分析报告
+          MBTI-Research 面向AI科研团队，帮助硕士生、研究助理、博士后和科研助理教授理解自己的研究偏好与协作角色
         </p>
         <div class="d-flex gap-3 justify-content-center flex-wrap fade-in delay-200">
           {% if user.is_authenticated %}
@@ -20,16 +20,16 @@
                 📊 查看我的结果
               </a>
               <a class="btn btn-outline-primary btn-lg rounded-pill px-4 py-3" href="{% url 'mbti:test' %}?retake=true">
-                🔄 重新测试
+                🔄 重新测评
               </a>
             {% else %}
               <a class="btn btn-primary btn-lg rounded-pill px-4 py-3" href="{% url 'mbti:test' %}">
-                🚀 开始测试
+                🚀 开始测评
               </a>
             {% endif %}
           {% else %}
             <a class="btn btn-primary btn-lg rounded-pill px-4 py-3" href="{% url 'users:login' %}">
-              🚀 登录后开始测试
+              🚀 登录后开始测评
             </a>
             <a class="btn btn-outline-primary btn-lg rounded-pill px-4 py-3" href="{% url 'users:register' %}">
               📝 注册账号
@@ -41,37 +41,37 @@
   </div>
 </section>
 
-<!-- MBTI介绍部分 -->
+<!-- MBTI-Research介绍部分 -->
 <section class="intro-section py-5">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <div class="card card-elevated rounded-xl p-4 p-md-5">
-          <h2 class="text-center fw-bold mb-4 text-gradient">什么是MBTI人格测试？</h2>
+          <h2 class="text-center fw-bold mb-4 text-gradient">什么是 MBTI-Research？</h2>
           
           <div class="intro-content">
             <p class="lead mb-4">
-              <strong>MBTI（Myers-Briggs Type Indicator）</strong>是世界上最权威的人格测试工具之一，基于心理学家卡尔·荣格的人格类型理论发展而来。
+              <strong>MBTI-Research</strong>是一套面向AI科研团队的协作偏好测评。它保留 MBTI 四维度的可解释结构，但将题目和结果解释改写为论文、实验、组会、debug、合作与科研成长场景。
             </p>
             
-            <h3 class="fw-bold mt-4 mb-3 text-gradient">🎯 测试原理</h3>
-            <p>MBTI通过四个维度来分析个人的心理偏好：</p>
+            <h3 class="fw-bold mt-4 mb-3 text-gradient">🎯 测评维度</h3>
+            <p>MBTI-Research 通过四个维度帮助理解科研协作中的偏好：</p>
             <ul class="list-unstyled ms-3">
               <li class="mb-2 d-flex align-items-start">
                 <span class="me-2">•</span>
-                <span><strong>外向(E) vs 内向(I)</strong> - 你如何获得能量和关注焦点</span>
+                <span><strong>外向(E) vs 内向(I)</strong> - 你更通过讨论碰撞还是独立深思推进问题</span>
               </li>
               <li class="mb-2 d-flex align-items-start">
                 <span class="me-2">•</span>
-                <span><strong>感觉(S) vs 直觉(N)</strong> - 你如何收集和处理信息</span>
+                <span><strong>感觉(S) vs 直觉(N)</strong> - 你更依赖具体证据细节还是抽象机制和可能性</span>
               </li>
               <li class="mb-2 d-flex align-items-start">
                 <span class="me-2">•</span>
-                <span><strong>思考(T) vs 情感(F)</strong> - 你如何做出决策</span>
+                <span><strong>思考(T) vs 情感(F)</strong> - 你更优先逻辑标准还是团队影响与价值感</span>
               </li>
               <li class="mb-2 d-flex align-items-start">
                 <span class="me-2">•</span>
-                <span><strong>判断(J) vs 知觉(P)</strong> - 你如何组织生活和工作</span>
+                <span><strong>判断(J) vs 知觉(P)</strong> - 你更喜欢计划收束还是开放探索</span>
               </li>
             </ul>
             
@@ -81,37 +81,37 @@
                 <div class="value-card h-100" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: var(--radius-lg);">
                   <div class="value-icon">🧭</div>
                   <h5 class="value-title">自我认知</h5>
-                  <p class="value-desc">深入了解自己的性格特点与成长空间</p>
+                  <p class="value-desc">了解自己的研究偏好与成长空间</p>
                 </div>
               </div>
               <div class="col-6 col-lg-3">
                 <div class="value-card h-100" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: var(--radius-lg);">
                   <div class="value-icon">🤝</div>
-                  <h5 class="value-title">人际关系</h5>
-                  <p class="value-desc">改善沟通方式，建立和谐关系</p>
+                  <h5 class="value-title">团队协作</h5>
+                  <p class="value-desc">改善导师、同伴和项目组沟通方式</p>
                 </div>
               </div>
               <div class="col-6 col-lg-3">
                 <div class="value-card h-100" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: var(--radius-lg);">
                   <div class="value-icon">💼</div>
-                  <h5 class="value-title">职业发展</h5>
-                  <p class="value-desc">找到适合的职业方向与工作环境</p>
+                  <h5 class="value-title">角色分工</h5>
+                  <p class="value-desc">发现更适合承担的科研协作角色</p>
                 </div>
               </div>
               <div class="col-6 col-lg-3">
                 <div class="value-card h-100" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: var(--radius-lg);">
                   <div class="value-icon">📈</div>
-                  <h5 class="value-title">个人成长</h5>
-                  <p class="value-desc">制定针对性的自我提升计划</p>
+                  <h5 class="value-title">科研成长</h5>
+                  <p class="value-desc">形成更有针对性的训练与支持方式</p>
                 </div>
               </div>
             </div>
             
             <div class="mt-5 d-flex flex-wrap gap-2 justify-content-center">
-              <span class="feature-badge">✅ 科学权威</span>
-              <span class="feature-badge">✅ 快速便捷</span>
+              <span class="feature-badge">✅ AI科研语境</span>
+              <span class="feature-badge">✅ 协作偏好参考</span>
               <span class="feature-badge">✅ 详细报告</span>
-              <span class="feature-badge">✅ 实用指导</span>
+              <span class="feature-badge">✅ 沟通建议</span>
             </div>
           </div>
         </div>
@@ -120,14 +120,14 @@
   </div>
 </section>
 
-<!-- 16种性格类型预览 -->
+<!-- 16种科研协作画像预览 -->
 <section class="types-section py-5" id="types">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-lg-11">
         <div class="card card-elevated rounded-xl p-4 p-md-5">
-          <h2 class="text-center fw-bold mb-2 text-gradient">16种性格类型</h2>
-          <p class="text-center text-muted mb-4">MBTI 将人格分为 16 种类型，每种类型都有独特的特征和优势</p>
+          <h2 class="text-center fw-bold mb-2 text-gradient">16种科研协作画像</h2>
+          <p class="text-center text-muted mb-4">每种画像代表一种常见的研究偏好和协作风格，用于帮助团队更好地沟通与分工</p>
           
           <div class="row g-3 g-md-4">
             {% for type_info in type_list %}
@@ -154,23 +154,23 @@
           </div>
           
           <div class="text-center mt-5 p-4 rounded-xl" style="background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);">
-            <p class="text-muted mb-3">完成测试，发现属于你的独特性格类型</p>
+            <p class="text-muted mb-3">完成测评，了解你在AI科研协作中的偏好画像</p>
             {% if user.is_authenticated %}
               {% if has_result %}
                 <a class="btn btn-primary rounded-pill px-4 py-2 me-2" href="{% url 'mbti:result' %}">
                   📊 查看我的结果
                 </a>
                 <a class="btn btn-outline-primary rounded-pill px-4 py-2" href="{% url 'mbti:test' %}?retake=true">
-                  🔄 重新测试
+                  🔄 重新测评
                 </a>
               {% else %}
                 <a class="btn btn-primary rounded-pill px-4 py-2" href="{% url 'mbti:test' %}">
-                  🚀 立即开始测试
+                  🚀 立即开始测评
                 </a>
               {% endif %}
             {% else %}
               <a class="btn btn-primary rounded-pill px-4 py-2" href="{% url 'users:login' %}">
-                🚀 登录开始测试
+                🚀 登录开始测评
               </a>
             {% endif %}
           </div>
@@ -199,12 +199,12 @@
         <!-- 详细内容 -->
         <div class="type-detail-sections">
           <div class="type-detail-section" id="sectionDescription">
-            <h5>📖 性格概述</h5>
+            <h5>📖 科研画像概述</h5>
             <p id="modalDescription"></p>
           </div>
           
           <div class="type-detail-section" id="sectionStrengths">
-            <h5>🌟 性格优势</h5>
+            <h5>🌟 科研协作优势</h5>
             <p id="modalStrengths"></p>
           </div>
           
@@ -214,17 +214,17 @@
           </div>
           
           <div class="type-detail-section" id="sectionCareer">
-            <h5>💼 职业建议</h5>
+            <h5>🚀 科研角色建议</h5>
             <p id="modalCareer"></p>
           </div>
           
           <div class="type-detail-section" id="sectionWork">
-            <h5>🏢 工作风格</h5>
+            <h5>🏢 研究工作风格</h5>
             <p id="modalWork"></p>
           </div>
           
           <div class="type-detail-section" id="sectionRelations">
-            <h5>👥 人际关系</h5>
+            <h5>👥 团队协作方式</h5>
             <p id="modalRelations"></p>
           </div>
         </div>
@@ -232,11 +232,11 @@
       <div class="modal-footer border-0 pt-0">
         {% if user.is_authenticated %}
           <a class="btn btn-primary rounded-pill w-100" href="{% url 'mbti:test' %}">
-            🚀 开始测试，发现你的类型
+            🚀 开始测评，了解你的科研画像
           </a>
         {% else %}
           <a class="btn btn-primary rounded-pill w-100" href="{% url 'users:login' %}">
-            🚀 登录后开始测试
+            🚀 登录后开始测评
           </a>
         {% endif %}
       </div>
@@ -255,12 +255,12 @@
           <div class="accordion-item border-0 mb-3 rounded-lg overflow-hidden shadow-sm">
             <h2 class="accordion-header">
               <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                MBTI测试准确吗？
+                MBTI-Research 的结果应该如何使用？
               </button>
             </h2>
             <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
               <div class="accordion-body text-muted">
-                MBTI是一种自我报告式的性格评估工具，准确性取决于你的自我认知程度。建议在放松的状态下，根据真实的自己而非理想中的自己来回答问题。测试结果可以作为了解自己的参考，但不应作为绝对的判断标准。
+                它是自我报告式的协作偏好测评，适合用于自我理解、导师沟通和团队分工参考。结果不代表科研能力高低，也不应作为招生、招聘或评价表现的唯一依据。
               </div>
             </div>
           </div>
@@ -268,12 +268,12 @@
           <div class="accordion-item border-0 mb-3 rounded-lg overflow-hidden shadow-sm">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                测试需要多长时间？
+                测评需要多长时间？
               </button>
             </h2>
             <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
               <div class="accordion-body text-muted">
-                完整的测试包含93道题目，大约需要10-15分钟完成。请确保在安静的环境中进行测试，并按照第一直觉回答每个问题。
+                完整测评包含93道题目，大约需要10-15分钟完成。建议按照你在真实科研工作中的自然反应作答，而不是按照理想状态作答。
               </div>
             </div>
           </div>
@@ -281,12 +281,12 @@
           <div class="accordion-item border-0 mb-3 rounded-lg overflow-hidden shadow-sm">
             <h2 class="accordion-header">
               <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                我的性格类型会改变吗？
+                科研画像会改变吗？
               </button>
             </h2>
             <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
               <div class="accordion-body text-muted">
-                MBTI认为人格类型是相对稳定的，但随着年龄增长、经历变化，某些维度的偏好可能会有所调整。建议定期进行测试，观察自己的变化和成长。
+                偏好通常有一定稳定性，但会受到训练阶段、项目压力、合作对象和职业阶段影响。建议把结果看作当前协作方式的参考，而不是固定标签。
               </div>
             </div>
           </div>

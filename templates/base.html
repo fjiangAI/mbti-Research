@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
   <meta name="color-scheme" content="light" />
   <meta name="theme-color" content="#667eea" />
-  <meta name="description" content="专业的MBTI性格测试系统，3-5分钟获得详细的性格分析报告" />
-  <meta name="keywords" content="MBTI,性格测试,人格测试,INTJ,INFP,16型人格" />
-  <meta name="author" content="张超武" />
-  <title>{% block title %}MBTI人格测试{% endblock %}</title>
+  <meta name="description" content="MBTI-Research：面向AI科研团队的协作偏好与研究角色画像工具" />
+  <meta name="keywords" content="MBTI-Research,AI科研,科研协作,研究角色,INTJ,INFP,16型人格" />
+  <meta name="author" content="AI让世界更懂你" />
+  <title>{% block title %}MBTI-Research{% endblock %}</title>
   
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
@@ -27,7 +27,7 @@
     <div class="container">
       <a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'mbti:home' %}">
         <span class="brand-icon me-2">✨</span>
-        <span class="brand-text">MBTI-性格测试</span>
+        <span class="brand-text">MBTI-Research</span>
       </a>
       <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -38,11 +38,11 @@
             <a class="nav-link px-3" href="{% url 'mbti:home' %}">首页</a>
           </li>
           <li class="nav-item d-none d-md-block">
-            <a class="nav-link px-3" href="{% url 'mbti:home' %}#types">性格类型</a>
+            <a class="nav-link px-3" href="{% url 'mbti:home' %}#types">科研画像</a>
           </li>
           {% if user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link px-3" href="{% url 'mbti:test' %}">开始测试</a>
+              <a class="nav-link px-3" href="{% url 'mbti:test' %}">开始测评</a>
             </li>
             <li class="nav-item d-none d-md-block">
               <a class="nav-link px-3" href="{% url 'users:password_change' %}">修改密码</a>
@@ -97,9 +97,9 @@
         <div class="col-12 col-md-4 text-center text-md-start">
           <div class="footer-brand mb-2">
             <span class="brand-icon me-2">✨</span>
-            <span class="fw-bold">MBTI-性格测试</span>
+            <span class="fw-bold">MBTI-Research</span>
           </div>
-          <p class="text-muted small mb-0">专业的 MBTI 性格测试系统</p>
+          <p class="text-muted small mb-0">面向AI科研团队的协作画像工具</p>
         </div>
         
         <!-- 链接 -->
@@ -107,13 +107,13 @@
           <div class="footer-links">
             <a href="javascript:void(0)" class="footer-link" data-bs-toggle="modal" data-bs-target="#privacyModal">隐私政策</a>
             <a href="javascript:void(0)" class="footer-link" data-bs-toggle="modal" data-bs-target="#termsModal">使用条款</a>
-            <a href="javascript:void(0)" class="footer-link" data-bs-toggle="modal" data-bs-target="#contactModal">联系我们</a>
+            <a href="javascript:void(0)" class="footer-link" data-bs-toggle="modal" data-bs-target="#contactModal">关于项目</a>
           </div>
         </div>
         
         <!-- 版权和备案 -->
         <div class="col-12 col-md-4 text-center text-md-end">
-          <p class="text-muted small mb-1">© 2025 MBTI Test. All rights reserved.</p>
+          <p class="text-muted small mb-1">© 2025 MBTI-Research. All rights reserved.</p>
           <p class="mb-0">
             <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer" class="icp-link">
               京ICP备2025157088号
@@ -125,7 +125,7 @@
       <!-- 底部分隔线和说明 -->
       <div class="border-top mt-3 pt-3">
         <p class="text-center text-muted small mb-0">
-          本测试仅供参考，不构成专业心理诊断。如需专业帮助，请咨询心理咨询师。
+          本测评仅用于科研协作中的自我理解与沟通参考，不构成心理诊断，也不应作为录用或评价能力的唯一依据。
         </p>
       </div>
     </div>
@@ -146,7 +146,7 @@
           <p>我们收集的信息仅限于您在注册和使用服务过程中主动提供的信息，包括：</p>
           <ul>
             <li>账户信息：用户名、邮箱地址</li>
-            <li>测试数据：您的答题选择和测试结果</li>
+            <li>测评数据：您的答题选择和测评结果</li>
             <li>设备信息：浏览器类型、访问时间等基础技术信息</li>
           </ul>
           
@@ -154,7 +154,7 @@
           <p>我们使用收集的信息用于：</p>
           <ul>
             <li>提供和维护测试服务</li>
-            <li>生成您的个人测试报告</li>
+            <li>生成您的个人测评报告</li>
             <li>改进我们的服务质量</li>
             <li>保障账户安全</li>
           </ul>
@@ -171,7 +171,7 @@
           <p>我们承诺：</p>
           <ul>
             <li>不会出售或出租您的个人信息给第三方</li>
-            <li>不会在未经您同意的情况下公开您的测试结果</li>
+            <li>不会在未经您同意的情况下公开您的测评结果</li>
             <li>仅在法律要求时配合相关部门的合法调查</li>
           </ul>
           
@@ -203,13 +203,13 @@
           <p class="text-muted small">最后更新：2025年1月</p>
           
           <h6 class="fw-bold mt-4">1. 服务说明</h6>
-          <p>本网站提供基于 MBTI 理论的性格测试服务。MBTI（Myers-Briggs Type Indicator）是一种广泛使用的性格分类工具，旨在帮助用户了解自己的性格偏好。</p>
+          <p>本网站提供面向AI科研团队的 MBTI-Research 协作偏好测评服务，旨在帮助用户了解自己的研究协作偏好、沟通方式和适合的科研角色。</p>
           
-          <h6 class="fw-bold mt-4">2. 测试结果声明</h6>
+          <h6 class="fw-bold mt-4">2. 测评结果声明</h6>
           <p><strong>重要提示：</strong></p>
           <ul>
-            <li>本测试结果仅供参考和自我探索，不构成专业心理诊断</li>
-            <li>测试结果不应用于招聘决策、医疗诊断或其他重要决定</li>
+            <li>本测评结果仅供科研协作、自我理解和团队沟通参考，不构成专业心理诊断</li>
+            <li>测评结果不应用作招生、招聘、录用、晋升或医疗诊断等重要决定的唯一依据</li>
             <li>如您有心理健康方面的困扰，建议咨询专业心理咨询师</li>
           </ul>
           
@@ -234,7 +234,7 @@
           <p>我们努力确保服务的稳定性和准确性，但不对以下情况承担责任：</p>
           <ul>
             <li>因不可抗力导致的服务中断</li>
-            <li>用户基于测试结果做出的任何决定</li>
+            <li>用户基于测评结果做出的任何决定</li>
             <li>第三方链接或服务的内容</li>
           </ul>
           
@@ -251,48 +251,26 @@
     </div>
   </div>
 
-  <!-- 联系我们模态框 -->
+  <!-- 关于项目模态框 -->
   <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header border-0">
-          <h5 class="modal-title fw-bold" id="contactModalLabel">📮 联系我们</h5>
+          <h5 class="modal-title fw-bold" id="contactModalLabel">✨ 关于 MBTI-Research</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body text-center py-4">
           <div class="contact-icon mb-3">
-            <span style="font-size: 4rem;">💬</span>
+            <span style="font-size: 4rem;">✨</span>
           </div>
-          <p class="text-muted mb-4">如有任何问题、建议或合作意向，欢迎通过以下方式联系我们</p>
+          <h4 class="fw-bold text-gradient mb-3">AI让世界更懂你</h4>
+          <p class="text-muted mb-0">
+            MBTI-Research 面向AI科研团队，帮助成员理解自己的研究偏好、沟通方式和适合承担的协作角色。
+          </p>
           
-          <div class="contact-methods">
-            <div class="contact-item d-flex align-items-center justify-content-center mb-3">
-              <span class="contact-item-icon me-3">📧</span>
-              <div class="text-start">
-                <div class="small text-muted">邮箱</div>
-                <a href="mailto:13613527283@163.com" class="fw-bold text-decoration-none">13613527283@163.com</a>
-              </div>
-            </div>
-            
-            <div class="contact-item d-flex align-items-center justify-content-center mb-3">
-              <span class="contact-item-icon me-3">🌐</span>
-              <div class="text-start">
-                <div class="small text-muted">网站</div>
-                <a href="http://best-mbti-test.xin/" target="_blank" class="fw-bold text-decoration-none">best-mbti-test.xin</a>
-              </div>
-            </div>
-            
-            <div class="contact-item d-flex align-items-center justify-content-center">
-              <span class="contact-item-icon me-3">💻</span>
-              <div class="text-start">
-                <div class="small text-muted">GitHub</div>
-                <a href="https://github.com/zcw576020095/mbti-test" target="_blank" class="fw-bold text-decoration-none">zcw576020095/mbti-test</a>
-              </div>
-            </div>
-          </div>
         </div>
         <div class="modal-footer border-0 justify-content-center">
-          <p class="text-muted small mb-0">我们通常会在 1-2 个工作日内回复</p>
+          <p class="text-muted small mb-0">测评结果仅供科研协作和自我理解参考</p>
         </div>
       </div>
     </div>

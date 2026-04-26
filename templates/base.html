@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -14,10 +15,10 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
   
   <!-- Bootstrap 5 (本地) -->
-  <link href="/static/vendor/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'vendor/bootstrap.min.css' %}" rel="stylesheet">
   
   <!-- Custom Styles -->
-  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   
   {% block extra_css %}{% endblock %}
 </head>
@@ -272,7 +273,7 @@
   </div>
 
   <!-- Bootstrap JS (本地) -->
-  <script src="/static/vendor/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'vendor/bootstrap.bundle.min.js' %}"></script>
   
   <!-- 全局脚本 -->
   <script>

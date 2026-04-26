@@ -883,7 +883,6 @@ def result_pdf_view(request):
     story.append(Spacer(1, 0.3*cm))
     story.append(Paragraph('本报告由 MBTI-Research 生成，仅供科研协作参考', footer_style))
     story.append(Paragraph(f'报告生成时间：{now_local.strftime("%Y年%m月%d日 %H:%M")}', footer_style))
-    story.append(Paragraph('京ICP备2025157088号', footer_style))
 
     # 构建PDF
     doc.build(story)

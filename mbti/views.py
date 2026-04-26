@@ -14,6 +14,118 @@ import re
 logger = logging.getLogger(__name__)
 
 
+DIMENSION_META = {
+    "IE": {
+        "name": "能量来源",
+        "left": "E",
+        "right": "I",
+        "left_name": "外向",
+        "right_name": "内向",
+        "total": 21,
+    },
+    "SN": {
+        "name": "信息获取",
+        "left": "S",
+        "right": "N",
+        "left_name": "感觉",
+        "right_name": "直觉",
+        "total": 26,
+    },
+    "TF": {
+        "name": "决策方式",
+        "left": "T",
+        "right": "F",
+        "left_name": "思考",
+        "right_name": "情感",
+        "total": 24,
+    },
+    "JP": {
+        "name": "生活态度",
+        "left": "J",
+        "right": "P",
+        "left_name": "判断",
+        "right_name": "知觉",
+        "total": 22,
+    },
+}
+
+
+def _coerce_number(value, default=0):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def build_dimension_detail_items(score_detail, confidence=None):
+    """Normalize stored score data into display-ready dimension rows.
+
+    New results store raw scores for both poles. Older results stored only the
+    left-minus-right difference, so we reconstruct raw pole scores from the
+    dimension total when needed.
+    """
+    confidence = confidence or {}
+    score_detail = score_detail or {}
+    detail_items = []
+
+    for dim, meta in DIMENSION_META.items():
+        raw = score_detail.get(dim)
+        total = meta["total"]
+        left = meta["left"]
+        right = meta["right"]
+        left_score = 0.0
+        right_score = 0.0
+
+        if isinstance(raw, dict):
+            if "left_score" in raw or "right_score" in raw:
+                left_score = _coerce_number(raw.get("left_score"))
+                right_score = _coerce_number(raw.get("right_score"))
+            else:
+                left_score = _coerce_number(raw.get(left))
+                right_score = _coerce_number(raw.get(right))
+            diff = _coerce_number(raw.get("diff"), left_score - right_score)
+            raw_total = int(_coerce_number(raw.get("total"), total))
+            total = raw_total or total
+        else:
+            diff = _coerce_number(raw)
+            left_score = (total + diff) / 2
+            right_score = total - left_score
+
+        left_score = int(round(left_score))
+        right_score = int(round(right_score))
+        diff = int(round(left_score - right_score))
+        winner = left if left_score > right_score else right
+        preference_name = meta["left_name"] if winner == left else meta["right_name"]
+        confidence_value = confidence.get(dim)
+        if isinstance(raw, dict) and confidence_value is None:
+            confidence_value = raw.get("confidence")
+        confidence_value = _coerce_number(confidence_value, abs(diff) / total if total else 0)
+        if confidence_value > 1:
+            confidence_value = confidence_value / 100
+
+        detail_items.append({
+            "dim": dim,
+            "name": meta["name"],
+            "left": left,
+            "right": right,
+            "left_name": meta["left_name"],
+            "right_name": meta["right_name"],
+            "left_score": left_score,
+            "right_score": right_score,
+            "left_percent": round(left_score / total * 100, 2) if total else 0,
+            "right_percent": round(right_score / total * 100, 2) if total else 0,
+            "total": total,
+            "diff": diff,
+            "diff_display": f"{diff:+d}",
+            "winner": winner,
+            "preference_name": preference_name,
+            "confidence": confidence_value,
+            "confidence_percent": round(confidence_value * 100),
+        })
+
+    return detail_items
+
+
 
 def home_view(request):
     # 检查用户是否有测试结果
@@ -392,22 +504,28 @@ def submit_view(request):
             dims_raw, counts = StandardMBTIScoringService.calculate_scores_standard(responses)
             code = StandardMBTIScoringService.generate_type_code_standard(dims_raw)
             
-            # 转换为兼容格式（用于存储和显示）
+            # 存储每个维度两端的原始分，避免结果页只能展示差值。
             dims = {}
             confidence = {}
             for dim, scores in dims_raw.items():
-                if dim == "IE":
-                    dims[dim] = scores["E"] - scores["I"]
-                    confidence[dim] = abs(scores["E"] - scores["I"]) / 21.0
-                elif dim == "SN":
-                    dims[dim] = scores["S"] - scores["N"]
-                    confidence[dim] = abs(scores["S"] - scores["N"]) / 26.0
-                elif dim == "TF":
-                    dims[dim] = scores["T"] - scores["F"]
-                    confidence[dim] = abs(scores["T"] - scores["F"]) / 24.0
-                elif dim == "JP":
-                    dims[dim] = scores["J"] - scores["P"]
-                    confidence[dim] = abs(scores["J"] - scores["P"]) / 22.0
+                meta = DIMENSION_META[dim]
+                left = meta["left"]
+                right = meta["right"]
+                left_score = scores[left]
+                right_score = scores[right]
+                diff = left_score - right_score
+                confidence[dim] = abs(diff) / meta["total"]
+                dims[dim] = {
+                    left: left_score,
+                    right: right_score,
+                    "left": left,
+                    "right": right,
+                    "left_score": left_score,
+                    "right_score": right_score,
+                    "total": meta["total"],
+                    "diff": diff,
+                    "winner": left if left_score > right_score else right,
+                }
         else:
             # 使用原有Likert量表计分规则
             responses = Response.objects.filter(user=request.user).select_related('question')
@@ -452,9 +570,8 @@ def submit_view(request):
 def result_view(request):
     # 获取用户最新的测试结果（按创建时间倒序）
     result = Result.objects.filter(user=request.user).order_by('-created_at').first()
-    score_items = list(result.score_detail.items()) if result else []
     confidence = result.confidence if result else {}
-    detail_items = [(k, v, confidence.get(k)) for (k, v) in score_items]
+    detail_items = build_dimension_detail_items(result.score_detail if result else {}, confidence)
     profile = TypeProfile.objects.filter(code=result.type_code).first() if result else None
     return render(request, 'mbti/result.html', {"result": result, "detail_items": detail_items, "profile": profile})
 
@@ -524,6 +641,7 @@ def result_pdf_view(request):
     description = getattr(profile, 'description', '') if profile else ''
     strengths = getattr(profile, 'strengths', '') if profile else ''
     growth = getattr(profile, 'growth', '') if profile else ''
+    detail_items = build_dimension_detail_items(result.score_detail, result.confidence)
 
     # 关键修复：使用 localtime 转换为北京时间
     test_time_raw = result.updated_at if hasattr(result, 'updated_at') and result.updated_at else result.created_at
@@ -644,31 +762,17 @@ def result_pdf_view(request):
     story.append(Paragraph('◆ 四维度分析', section_style))
     story.append(Spacer(1, 0.3*cm))
     
-    # 维度解释
-    dim_labels = {
-        'IE': ('内向 (I)', '外向 (E)', '能量来源'),
-        'SN': ('感觉 (S)', '直觉 (N)', '信息获取'),
-        'TF': ('思考 (T)', '情感 (F)', '决策方式'),
-        'JP': ('判断 (J)', '知觉 (P)', '生活态度'),
-    }
+    dim_data = [['维度', '原始分', '倾向', '差值', '置信度']]
+    for item in detail_items:
+        dim_data.append([
+            item['name'],
+            f"{item['left']} {item['left_score']} / {item['right']} {item['right_score']}",
+            f"{item['winner']}（{item['preference_name']}）",
+            item['diff_display'],
+            f"{item['confidence_percent']}%",
+        ])
     
-    dim_data = [['维度', '倾向', '分数', '置信度']]
-    for k, v in result.score_detail.items():
-        if k in dim_labels:
-            left, right, name = dim_labels[k]
-            conf = result.confidence.get(k, 0)
-            # 修正倾向判断逻辑
-            if k == 'IE':
-                tendency = '外向' if v > 0 else '内向'
-            elif k == 'SN':
-                tendency = '感觉' if v > 0 else '直觉'
-            elif k == 'TF':
-                tendency = '思考' if v > 0 else '情感'
-            else:
-                tendency = '判断' if v > 0 else '知觉'
-            dim_data.append([name, tendency, f'{v:+.1f}', f'{conf:.0%}'])
-    
-    dim_table = Table(dim_data, colWidths=[4*cm, 3*cm, 3*cm, 3*cm])
+    dim_table = Table(dim_data, colWidths=[3.2*cm, 3.4*cm, 3.2*cm, 2.2*cm, 2.4*cm])
     dim_table.setStyle(TableStyle([
         ('FONTNAME', (0, 0), (-1, -1), base_font),
         ('FONTSIZE', (0, 0), (-1, -1), 10),
@@ -709,20 +813,12 @@ def result_pdf_view(request):
     }
     
     story.append(Paragraph('◆ 维度详解', section_style))
-    for k, v in result.score_detail.items():
-        if k in dim_explanations:
-            exp = dim_explanations[k]
+    for item in detail_items:
+        dim = item['dim']
+        if dim in dim_explanations:
+            exp = dim_explanations[dim]
             story.append(Paragraph(f'<b>{exp["name"]}</b>', subsection_style))
-            # 根据分数显示对应的解释
-            if k == 'IE':
-                letter = 'E' if v > 0 else 'I'
-            elif k == 'SN':
-                letter = 'S' if v > 0 else 'N'
-            elif k == 'TF':
-                letter = 'T' if v > 0 else 'F'
-            else:
-                letter = 'J' if v > 0 else 'P'
-            story.append(Paragraph(exp[letter], list_style))
+            story.append(Paragraph(exp[item['winner']], list_style))
     
     story.append(Spacer(1, 0.5*cm))
     

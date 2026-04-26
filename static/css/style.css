@@ -744,6 +744,12 @@ body::before {
   border-radius: var(--radius-md);
 }
 
+.dimension-label-score {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+
 .dimension-label-left.active {
   color: var(--primary);
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
@@ -852,6 +858,7 @@ body::before {
 .dimension-score {
   font-size: 0.75rem;
   color: var(--gray-400);
+  text-align: right;
 }
 
 

@@ -95,62 +95,62 @@ class StandardMBTIScoringService:
         # 计算E得分
         for q_num in StandardMBTIScoringService.E_SCORING_RULES['E_A']:
             if q_num in question_responses:
+                counts['IE'] += 1
                 ab_choice = question_responses[q_num]
                 if ab_choice == 'A':
                     E_score += 1
-                    counts['IE'] += 1
         
         for q_num in StandardMBTIScoringService.E_SCORING_RULES['I_B']:
             if q_num in question_responses:
+                counts['IE'] += 1
                 ab_choice = question_responses[q_num]
                 if ab_choice == 'B':
                     E_score += 1
-                    counts['IE'] += 1
         
         # 计算S得分
         for q_num in StandardMBTIScoringService.S_SCORING_RULES['S_A']:
             if q_num in question_responses:
+                counts['SN'] += 1
                 ab_choice = question_responses[q_num]
                 if ab_choice == 'A':
                     S_score += 1
-                    counts['SN'] += 1
         
         for q_num in StandardMBTIScoringService.S_SCORING_RULES['N_B']:
             if q_num in question_responses:
+                counts['SN'] += 1
                 ab_choice = question_responses[q_num]
                 if ab_choice == 'B':
                     S_score += 1
-                    counts['SN'] += 1
         
         # 计算T得分
         for q_num in StandardMBTIScoringService.T_SCORING_RULES['T_A']:
             if q_num in question_responses:
+                counts['TF'] += 1
                 ab_choice = question_responses[q_num]
                 if ab_choice == 'A':
                     T_score += 1
-                    counts['TF'] += 1
         
         for q_num in StandardMBTIScoringService.T_SCORING_RULES['F_B']:
             if q_num in question_responses:
+                counts['TF'] += 1
                 ab_choice = question_responses[q_num]
                 if ab_choice == 'B':
                     T_score += 1
-                    counts['TF'] += 1
         
         # 计算J得分
         for q_num in StandardMBTIScoringService.J_SCORING_RULES['J_A']:
             if q_num in question_responses:
+                counts['JP'] += 1
                 ab_choice = question_responses[q_num]
                 if ab_choice == 'A':
                     J_score += 1
-                    counts['JP'] += 1
         
         for q_num in StandardMBTIScoringService.J_SCORING_RULES['P_B']:
             if q_num in question_responses:
+                counts['JP'] += 1
                 ab_choice = question_responses[q_num]
                 if ab_choice == 'B':
                     J_score += 1
-                    counts['JP'] += 1
         
         # 计算对侧分数（按照标准MBTI规则）
         I_score = StandardMBTIScoringService.DIMENSION_TOTALS['IE'] - E_score

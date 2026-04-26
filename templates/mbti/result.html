@@ -29,49 +29,32 @@
     <div class="card card-elevated rounded-xl p-4 mb-4 fade-in delay-200">
       <h3 class="fw-bold mb-4 text-gradient">📊 维度分析</h3>
       <div class="row g-3">
-        {% for k, v, c in detail_items %}
+        {% for item in detail_items %}
         <div class="col-md-6">
           <div class="dimension-card">
-            {# 计算偏向和进度条宽度 #}
-            {# IE: E-I，正数=E，负数=I #}
-            {# SN: S-N，正数=S，负数=N #}
-            {# TF: T-F，正数=T，负数=F #}
-            {# JP: J-P，正数=J，负数=P #}
-            
-            {# 左侧标签（第一个字母：E/S/T/J） #}
             <div class="dimension-labels">
-              <span class="dimension-label-left {% if v > 0 %}active{% endif %}">
-                {% if k == 'IE' %}E{% elif k == 'SN' %}S{% elif k == 'TF' %}T{% elif k == 'JP' %}J{% endif %}
+              <span class="dimension-label-left {% if item.winner == item.left %}active{% endif %}">
+                {{ item.left }} <small class="dimension-label-score">{{ item.left_score }}</small>
               </span>
-              <span class="dimension-label-right {% if v <= 0 %}active{% endif %}">
-                {% if k == 'IE' %}I{% elif k == 'SN' %}N{% elif k == 'TF' %}F{% elif k == 'JP' %}P{% endif %}
+              <span class="dimension-label-right {% if item.winner == item.right %}active{% endif %}">
+                <small class="dimension-label-score">{{ item.right_score }}</small> {{ item.right }}
               </span>
             </div>
             
-            {# 中间对称进度条 #}
             <div class="dimension-bar-centered">
               <div class="dimension-bar-left">
-                {% if v > 0 %}
-                  {% widthratio v 20 100 as left_width %}
-                  <div class="dimension-fill-left" style="width: {{ left_width|default:0 }}%;"></div>
-                {% endif %}
+                <div class="dimension-fill-left" style="width: {{ item.left_percent }}%;"></div>
               </div>
               <div class="dimension-bar-center"></div>
               <div class="dimension-bar-right">
-                {% if v <= 0 %}
-                  {% widthratio v|mul:-1 20 100 as right_width %}
-                  <div class="dimension-fill-right" style="width: {{ right_width|default:0 }}%;"></div>
-                {% endif %}
+                <div class="dimension-fill-right" style="width: {{ item.right_percent }}%;"></div>
               </div>
             </div>
             
-            {# 维度名称和分数 #}
             <div class="dimension-info">
-              <span class="dimension-name-text">
-                {% if k == 'IE' %}能量来源{% elif k == 'SN' %}信息获取{% elif k == 'TF' %}决策方式{% elif k == 'JP' %}生活态度{% endif %}
-              </span>
+              <span class="dimension-name-text">{{ item.name }}：{{ item.winner }}（{{ item.preference_name }}）</span>
               <span class="dimension-score">
-                分数: {{ v|floatformat:1 }} | 置信度: {% if c %}{{ c|floatformat:2 }}{% else %}--{% endif %}
+                {{ item.left }} {{ item.left_score }} / {{ item.right }} {{ item.right_score }}，差值 {{ item.diff_display }}，置信度 {{ item.confidence_percent }}%
               </span>
             </div>
           </div>

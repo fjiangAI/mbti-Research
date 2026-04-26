@@ -211,7 +211,7 @@ def main():
     print("\n下一步：")
     print("1. 访问 http://localhost:8989/admin/ 登录管理后台")
     print("2. 使用账号 admin / admin@123.. 登录")
-    print("3. 可以导入16种人格类型数据：python populate_personality_data.py")
+    print("3. 可以导入16种科研协作画像数据：python populate_personality_data.py")
 
 
 if __name__ == '__main__':

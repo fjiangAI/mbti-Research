@@ -189,33 +189,6 @@ mbti-test/
 └── screenshots/                 # 项目截图
 ```
 
-## 🎨 界面展示
-以下截图均位于 `screenshots/` 目录：
-
-### 主页（Index）
-![主页 1](screenshots/index1.png)
-![主页 2](screenshots/index2.png)
-![主页 3](screenshots/index3.png)
-
-### 登录页面
-![登录](screenshots/login.png)
-
-### 注册页面
-![注册](screenshots/register.png)
-
-### 测试页面
-![注册](screenshots/test.png)
-
-### 测试详情
-![测试详情](screenshots/test_info.png)
-
-### 测试结果
-![测试结果](screenshots/test_result.png)
-
-### PDF 测试报告
-![测试报告 1](screenshots/test_report1.png)
-![测试报告 2](screenshots/test_report2.png)
-
 ## 🧭 使用指南
 ### 1. 登录与注册
 - 进入登录或注册页，密码框右侧有眼睛图标可切换显示/隐藏。
